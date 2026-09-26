@@ -49,12 +49,6 @@ tools/
   ffxi_structs.h         The struct definitions as a standalone C header, for Ghidra's own
                          "Parse C Source" -- one deliberate type substitution documented in the
                          file's own header (an IDA/MSVC-specific type has no place in portable C).
-  dynamic_analysis_hooks/
-                         A logging-only instrumentation DLL for runtime verification -- confirms
-                         static findings against the actual running client without needing a
-                         debugger attached. Includes its own build instructions and a full,
-                         honest build-verification log (what was actually compiled, disassembled,
-                         and run, versus what's untested). See its own README for details.
   ps2_dwarf/             The custom DWARF v1 parser and R5900 disassembler this project wrote to
                          read the PS2 build's own debug data, plus ready-to-use JSON exports of
                          its output (2,758 PS2 types, 19,944 symbols) -- this is where most of
