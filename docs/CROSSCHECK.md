@@ -154,3 +154,32 @@ Whether the race the paragraph describes happens was not checked.
 
 Also in §13: the "small wrapper at `0x1002A394`" (line 2041) is an instruction inside 0x1002A380, a 46-byte
 function called once, from 0x1002C344.
+
+### 6.5 §12b: the `CXi*Actor` vtable lengths
+
+The bounds below come from the image. Each vtable's dwords are read from its start, and each one is checked
+for whether it is a function's first instruction. The table ends where something else begins: the first
+address after the start that code refers to. The vtable addresses are those each class's constructor stores.
+
+| Class (vtable) | §12b | From the code | Where it ends |
+|---|---|---|---|
+| `CXiActor` (`0x1032CFE0`) | 227 | **254** | Slots 0–253 are all function starts. 0x1032D3D8, slot 254's position, holds `0x45800000`. Nine functions read it as a float with `fmul dword ptr [0x1032D3D8]`, the first at 0x1008306B. |
+| `CXiAtelActor` (`0x1032E3C8`) | 254 | 254 (agrees) | 0x1032E7C0, slot 254's position, is stored as a vtable by 0x100A9416 and 0x100A9617. |
+| `CXiControlActor` (`0x1032DFC8`) | 255 | 255 (agrees) | Slot 255 is 0. |
+| `CXiCollisionActor` (`0x1032DB40`) | 256 | 256 (agrees) | 0x1032DF40 is referred to by code. |
+| `CXiSkeletonActor` (`0x10330F40`) | 264 | 264 (agrees) | Slot 264 holds `0x4096CBE4`, which is not code, and 0x10331360 is referred to by code. |
+
+So `CXiActor`'s own table has 254 slots, not 227. Slots 227–253 of `CXiActor` and `CXiAtelActor` are
+identical; the first is 0x10082920 in both. §12b's "27 new PC slots" (227–253) are therefore already in
+`CXiActor`, and `CXiAtelActor` adds none. Over 0–253, `CXiAtelActor` differs from `CXiActor` only at slots 0,
+6, 8 and 111.
+
+Over the first 227 slots, §12b's counts are reproduced exactly:
+- `CXiActor` and `CXiSkeletonActor` share 96;
+- `CXiActor` and `CXiAtelActor` share 223.
+
+`CXiControlActor` slot 254 is 0x100AAF30, as §12b says. 0x100AAF30 is also slot 254 of `CXiCollisionActor`.
+That table's own new slot is 255, 0x100A4CE0.
+
+**On ffximain-gfx's side:** its `data/class_vtables.json` lists 283 slots for `CXiAtelActor`. That runs 29
+slots past 0x1032E7C0, into the next vtable, so that file is wrong for this class.
