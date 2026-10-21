@@ -196,3 +196,62 @@ to; `CXiAtelActor` has 254.
 - **§2–§4, §9, §10 and §14–§15**: the names and addresses they cite were checked mechanically against function
   starts and the symbol script. §6.2 lists the only conflicts found. The behaviour they describe was not
   checked.
+
+## 7. PC functions matched to the PS2 build's symbol table
+
+The owner supplied a PS2 executable that is not stripped (INSTALL.ELF: Metrowerks MIPS C 2.4.1.01, 19,013 code
+symbols with mangled signatures, and its relocation table). Of its symbol names, 18,650 also appear in
+`tools/ps2_dwarf/ps2_symbols.json`; 180 of those sit at the same address, so it is a different build of the same
+code. ffximain-gfx's `pipeline/ps2_match.py` matches PC functions to its named functions. The ELF itself is in
+neither repository.
+
+### 7.1 Kinds of evidence
+
+| Kind | Rule | DancingMad confidence |
+|---|---|---|
+| `string` | A string literal (exact bytes, 6 or more) that exactly one PS2 function and exactly one PC function refer to. PS2 references are read from the relocations (HI16/LO16 pairs); PC references from instruction operands. | confirmed |
+| `strings` | A function's whole set of literals (2 or more), held by exactly one function on each side. | confirmed |
+| `floats` | Two or more float constants, each used by exactly one function on each side. | candidate |
+| `calls`, `neighbours` | Call-graph position relative to matched functions. A neighbours match needs at least two matched callers or callees in the same direction, mutually best and with no tie. | candidate |
+
+The inferred kinds never pair C runtime code: the two runtimes are different code that share only names.
+
+The result is 195 matches: 133 `string`, 44 `strings`, 5 `floats`, 2 `calls`, 11 `neighbours`. The 14 conflicts
+are not used.
+
+**Consistency.** Nine matched functions already had a name in ffximain-gfx's Ghidra name list:
+`ReqEventInfo`, `err_print`, `gcLoginProc` and 6 more. In each, the PS2 symbol has exactly that name. The list is
+`runs/ghidra/names.json`, written 2 Oct. Where it got those names is not recorded, so this shows the two agree, not
+that they are independent.
+
+### 7.2 DancingMad names the PS2 match agrees with
+
+| PC address | DancingMad name | PS2 symbol |
+|---|---|---|
+| `0x100A9F40` | `CXiControlActor_SetTarget` | `SetTarget__14XiControlActorFP7XiActor` |
+| `0x100CF210` | `CXiSkeletonActor_SetModel` | `SetModel__15XiSkeletonActorFP10YmResource` |
+
+### 7.3 DancingMad names the PS2 match disagrees with
+
+Each row below is a confirmed match: the PC function and the PS2 function each hold the literal named, and no
+other function on either side does. The literals are shown decoded as Shift-JIS, the game's encoding.
+
+| PC address | DancingMad name | PS2 name (symbol) | Kind | Evidence |
+|---|---|---|---|---|
+| `0x10057FB0` | `CMoSchedularTask_Interpret` | `YmSchedulerTask_ExecuteTag` (`ExecuteTag__15YmSchedulerTaskFP12YmSchCodeTag`) | string, confirmed | unique literal 'カウンタースケジューラが見つかりませんでした。[%s:%s]'; unique literal '残像用メモリの確保に失敗しました。' |
+| `0x10085060` | `CXiActor_DrawResourceShadows` | `CXiActor_StartGeneraters` (`StartGeneraters__7XiActorFP14YmResourceFile`) | string, confirmed | unique literal 'キャラにジェネレータ詰めすぎ' |
+| `0x100B84B0` | `EventOp_LoadWeather` | `XiEvent_CodeGETWEATER` (`CodeGETWEATER__7XiEventFv`) | string, confirmed | unique literal 'ERROR!:Weather file ga nee! [%d]' |
+| `0x100D2F60` | `CXiSkeletonActor_LoadSkeletonSync` | `CXiSkeletonActor_SetUp` (`SetUp__15XiSkeletonActorFi`) | string, confirmed | unique literal 'ＧＲＰ番号がおかしいです。:%x(cate:%d race:%d)'; unique literal '種族番号がおかしいです。'; unique literal '種族番号がおかしいです。(釣り竿アクターセットアップ中です)' |
+| `0x10251500` | `Dancer_WorldBegin` | `StDancer_Update` (`Update__8StDancerFv`) | string, confirmed | unique literal '### Error! _dancerInit() failed' |
+| `0x10251A80` | `Dancer_InitDevice` | `StDancer__dancerInit` (`_dancerInit__8StDancerFv`) | string, confirmed | unique literal '  mainPool   : 0x%08X bytes'; unique literal '  workPool   : 0x%08X bytes @ 0x%08x'; unique literal 'MainMem'; unique literal 'WorkMem'; unique literal 'memTotal     = 0x%08X bytes' |
+
+Notes on the rows above:
+- **`CXiActor_DrawResourceShadows`** is labelled AUTHOR-INFERRED in `ffxi_symbols_ida.py`. Its literal reads
+  「キャラにジェネレータ詰めすぎ」 ("too many generators packed into the character"), which fits the PS2's
+  `StartGeneraters`.
+- **The two `Dancer_` rows** are names given from where the functions are called in `Frame_Render`. The PS2
+  symbols give the dancer's own method names.
+- **None of these names is changed here.** The table is for review.
+
+ffximain-gfx's tree applies a PS2 name only where a function has no name from the IDB, from DancingMad or from
+its own review.
