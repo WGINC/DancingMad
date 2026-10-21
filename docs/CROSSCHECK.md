@@ -27,7 +27,7 @@ IDA would split the function that holds them.
 |---|---|---|
 | `0x10085E89` | `ActorInit_CallSite_GenericMoveTowardTarget` | An instruction inside 0x10085E40. Nothing calls, jumps to or refers to it. It names a call site, not a function. |
 | `0x100D6464` | `CXiSkeletonActor_CreateGeneratorClone_CallSite` | The same: an instruction inside 0x100D63F0, never a target. |
-| `0x10040F50` | `CMoD3mSpecularElem_Ctor` (marked confirmed) | Inside 0x10040E70 (0x10040E70–0x10040FAC). No call, jump, or dword anywhere in the image refers to it, so no code can enter a function there. The constructor's address needs rechecking. |
+| `0x10040F50` | `CMoD3mSpecularElem_Ctor` (marked confirmed) | Inside 0x10040E70 (0x10040E70–0x10040FAC). No call, jump, or dword anywhere in the image refers to it, so no code can enter a function there. The function that stores this class's vtable `0x1032AD20` and stamps 448 at `+0x176` is **0x10041020** (§6.3). |
 | `0x10052E00` | `CXi471011C8_VT_1032B3B8_Dtor` | Inside 0x10052DF0 (0x10052DF0–0x10052E1B), with no reference to it. The destructor is likely the function at 0x10052DF0 that holds it; that is not checked here. |
 | `0x1006CE40` | `Pool_InitSlots` (marked confirmed) | Reached only by `jmp` from three functions (0x1006CF89, 0x1006F089, 0x100701F9): a tail block they share. The name describes the code, but it is not a function anything calls. |
 | `0x100035B0` | `D3DHolder_Present` | Reached only by the `jmp` at 0x10009726, the end of `CDx::Present`'s three-instruction stub at 0x10009720. It is the body of `CDx::Present`, not a separate function. |
@@ -109,3 +109,18 @@ Each address below has two names in this repository. The code was not used to ch
 | `0x10034330` | `IsReady` (line 499) | `Skel_BindShared` (FINDINGS line 2568; `tools/ffxi_symbols_ida.py`) |
 | `0x1000D630` | `CEnv_UpdateDualTargetMode` (line 2632) | `CEnv_UpdateStereoMode` (`tools/ffxi_symbols_ida.py`, which says it was renamed) |
 | `0x10276260` | `sqgxContext_Init` (line 948) | `sqgxContext_Create` (`tools/ffxi_symbols_ida.py`) |
+
+### 6.3 The rest of the §5 table, and `CMoD3mSpecularElem`'s constructor
+
+Read the same way, from the vtables' dwords and the functions' instructions.
+
+| Vtable | Claim | Result | Evidence |
+|---|---|---|---|
+| `0x1032AC90` | Ctor `0x1003FB70`; dtor `0x1003FB10`; `IsKind` `0x1003FB40`; `RebuildBlendWeights`/`ReleaseBlendWeights` `0x1003FBB0`/`0x1003FC30` | **Agrees** | The ctor calls `0x10044890`, stores the vtable and `0x1C0` (448) at `+0x176`. 0x1003FB10 is the plain destructor: it frees `+0x1BC` and tail-jumps to `0x10044970`. Slot 6 is the deleting destructor 0x1003FB50, which calls it. The methods are slots 12, 18 and 20. |
+| `0x1032AD80` | Ctor `0x10052F00`; plain dtor `0x10041110`; deleting `0x10041130`; `IsKind0` `0x10041120`; `SubmitVertices` `0x10040E20` | **Agrees** | The ctor stores the vtable and nothing at `+0x176`. 0x10041110 stores the vtable and tail-jumps to `0x10044970`. 0x10041130 is slot 6. The methods are slots 12 and 20. |
+| `0x1032ADE8` | Ctor `0x10041F40` writes 424 at `+0x176` | **Agrees** | It stores `0x1A8` (424) after the vtable and returns with `ret 4`. Slot 6 is 0x10041FE0; the table leaves the destructor open, and it was not read here. |
+| `0x1032B478` | Ctor `0x10052F80` writes 438; dtor `0x10052FB0`; `IsKind` `0x10052FA0`; `FadeRemaining` `0x10045D00`; `RebuildBlendWeights` `0x100565A0` | **Agrees** | `0x1B6` (438) at `+0x176`. The dtor is slot 6. The methods are slots 12, 17 and 18. |
+| `0x1032AD20` (`CMoD3mSpecularElem`, line 401) | Constructor `0x10040F50`, stamps 448 | **Does not match the code** | The only function that stores `0x1032AD20` at `[this]` is **0x10041020** (at 0x10041032). It calls `0x10044890` first and stores `0x1C0` (448) at `+0x176`. Its one caller is the call at 0x10050FF1 in 0x1004E8D0, the function that also calls `0x10052E90`. 0x10040F50 is inside 0x10040E70, which is slot 18 of `0x1032B3B8` (§6.1). Slot 6 of `0x1032AD20` is 0x100410F0. |
+
+0x10052ED0 (slot 6 of `0x1032B3B8`) has the same instructions as 0x10041130 (slot 6 of `0x1032AD80`), and both
+store `0x1032AD80`. They are two separate copies. The code shows this; it does not show the class relationship.
