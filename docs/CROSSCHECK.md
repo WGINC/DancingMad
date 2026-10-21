@@ -183,3 +183,14 @@ That table's own new slot is 255, 0x100A4CE0.
 
 **On ffximain-gfx's side:** its `data/class_vtables.json` lists 283 slots for `CXiAtelActor`. That runs 29
 slots past 0x1032E7C0, into the next vtable, so that file is wrong for this class.
+
+### 6.6 What this pass did not check
+
+- **The PS2 matches** (§1, §6–§8, §12c), for example `GetEnglishName` 0x10082F20 and the slot 104–112 band.
+  Checking them means reading the PS2 bodies; this pass read only the PC image.
+- **§12c's statement that slots 41–226 are all inherited from `CXiActor`.** It rests on a 227-slot
+  `CXiActor`, but by §6.5 that table runs to slot 253. The class ownership of slots 227–253 was not re-derived.
+- **The live-session results (§16)** cannot be checked from the image.
+- **§2–§4, §9, §10 and §14–§15**: the names and addresses they cite were checked mechanically against function
+  starts and the symbol script. §6.2 lists the only conflicts found. The behaviour they describe was not
+  checked.
