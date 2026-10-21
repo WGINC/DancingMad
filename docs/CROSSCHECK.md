@@ -76,3 +76,36 @@ The other claims in these two documents were not checked in this pass. They are 
   functions read.
 - **The measured timer calls in `Frame_Render`'s wait** (0x10012B28, 0x10012BCB, 0x10012BF5) pop 0 and go to
   `CXiTimerLow` methods 9 and 8 (vtable 0x1032A118).
+
+## 6. FINDINGS §1–17: checks made so far
+
+This pass reads FINDINGS §1–17 for claims the code can settle. It is not finished. A claim not listed here has
+not been checked.
+
+### 6.1 The `0x1032B3B8` row of the vtable table (line 420)
+
+All results below are read from the image: the vtable's dwords and the instructions of the functions named.
+
+| Claim | Result | Evidence |
+|---|---|---|
+| Constructor `0x10052E90`, writes 412 at `+0x176` | **Agrees** | It calls `0x10044890`, stores `0x1032B3B8` at `[this]` and `0x19C` (412) at `+0x176`, and returns `this`. Its one caller is the call at 0x10050FAC in 0x1004E8D0. |
+| `0x10052DC0` is not a function | **Agrees** | It is inside 0x10052DA0, the constructor that stores vtable `0x1032B2F8` and `0x1E0` at `+0x176`. |
+| Destructor `0x10052E00` | **Does not match the code** | 0x10052E00 is the `call 0x10044970` inside 0x10052DF0, and no call, jump or dword refers to it. 0x10052DF0 is slot 6 of `0x1032B2F8` (at 0x1032B310), the class 0x10052DA0 builds, not `0x1032B3B8`. Slot 6 of `0x1032B3B8` is **0x10052ED0**. It stores `0x1032AD80` at `[this]`, calls `0x10044970`, frees `this` when bit 0 of its argument is set, and returns with `ret 4`. The symbol script's `CXi471011C8_VT_1032B3B8_Dtor` (§2) carries the same address. |
+| `IsKind0` shared with `0x1032AD80` | **Agrees** | 0x10041120 is slot 12 of both vtables. |
+| `RebuildBlendWeights`/`SubmitVertices` `0x10040E70`/`0x10040FB0` | **Agrees on the addresses** | Slots 18 and 20 of `0x1032B3B8`. The symbol script names 0x10040F50, an address inside 0x10040E70 that nothing refers to, `CMoD3mSpecularElem_Ctor` (§2). |
+| `SetField198`/`GetField198` `0x10052EB0`/`0x10052EC0` | **Agrees on the addresses** | Slots 14 and 15. |
+
+Slot 6 is taken to be the deleting destructor because of its shape: it takes a flag, frees `this` when bit 0 is
+set, and returns `this`. That 0x10052ED0 stores the `0x1032AD80` vtable before calling `0x10044970` is what the
+code does. Why it does so, for example a base class, is not established here. In `0x1032AD80`, slot 6 is
+0x10041130, the deleting destructor the same table names.
+
+### 6.2 Names that differ within DancingMad
+
+Each address below has two names in this repository. The code was not used to choose between them.
+
+| Address | FINDINGS.md | Elsewhere here |
+|---|---|---|
+| `0x10034330` | `IsReady` (line 499) | `Skel_BindShared` (FINDINGS line 2568; `tools/ffxi_symbols_ida.py`) |
+| `0x1000D630` | `CEnv_UpdateDualTargetMode` (line 2632) | `CEnv_UpdateStereoMode` (`tools/ffxi_symbols_ida.py`, which says it was renamed) |
+| `0x10276260` | `sqgxContext_Init` (line 948) | `sqgxContext_Create` (`tools/ffxi_symbols_ida.py`) |
