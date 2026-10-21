@@ -14,7 +14,7 @@
 - **Verified C++** (`tree/src/CMoDistRingElem.cpp`): `void CMoDistRingElem::AllocRingGeometry()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 77 returned normally, 1220 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 77, town PASS 77, town2 PASS 77, combat PASS 77, zonetoinn PASS 77
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10043725 mov ebp, ecx` (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
-- **Calls directly:** `CDx::DrawPrimitiveUP`, `CMoDistMorphElem::ValidateMorphData`, `RegisterWithProcessor`, `Gfx_CalcFVFStride`, `??0exception@@QAE@XZ_1`, `StateBlock_ApplyTSS`, `operator_delete`, `Allocator_Generic`, `_atexit`
+- **Calls directly:** `CDx::DrawPrimitiveUP`, `CMoDistMorphElem::ValidateMorphData`, `RegisterWithProcessor`, `Gfx_CalcFVFStride`, `fn_1006AD90`, `StateBlock_ApplyTSS`, `operator_delete`, `Allocator_Generic`, `_atexit`
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::SetVertexShader`
 - **Reads constants** (.rdata): 2
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
@@ -23,6 +23,14 @@
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 - **DancingMad name:** `CMoDistRingElem_AllocRingGeometry` (not stated)
 - **DancingMad note:** Computes and allocates a buffer sized from ring-segment and ring-count fields.
+
+### `0x10052FD0` fn_10052FD0
+
+- **Verified C++** (`tree/src/CMoDistRingElem.cpp`): `XI_API undefined8 __thiscall fn_10052FD0(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10052FD1 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `CMoElem::Constructor`
+- **Run by a frame** (frame_set.json): static
 
 ### `0x10052FF0` CMoDistRingElem::vf012
 

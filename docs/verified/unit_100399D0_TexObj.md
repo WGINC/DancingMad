@@ -1,5 +1,35 @@
 # unit_100399D0_TexObj
 
+### `0x100399D0` fn_100399D0
+
+- **Verified C++** (`tree/src/unit_100399D0_TexObj.cpp`): `XI_API void __thiscall fn_100399D0(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 165 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100399D1 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `sub_1003AB10`
+- **Indirect calls:** 3, of which 3 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Reads globals:** `g_pTextureMng`
+- **Run by a frame** (frame_set.json): self, stack
+
+### `0x10039A30` TexObj_CreateAndUpload
+
+- **Verified C++** (`tree/src/unit_100399D0_TexObj.cpp`): `XI_API undefined1 __thiscall TexObj_CreateAndUpload(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10039A31 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
+- **Calls directly:** `TexObj_Create`, `sub_10071F60`
+- **Run by a frame** (frame_set.json): static, stack
+- **DancingMad name:** `TexObj_CreateAndUpload` (not stated)
+- **DancingMad note:** TexObj_Create, then state (+0x3C) = 3 (ready) and drops the source-resource reference at +8.
+
+### `0x10039A60` TexObj_Reupload
+
+- **Verified C++** (`tree/src/unit_100399D0_TexObj.cpp`): `XI_API undefined1 __thiscall TexObj_Reupload(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10039A61 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
+- **Calls directly:** `TexObj_Upload`
+- **Run by a frame** (frame_set.json): static
+- **DancingMad name:** `TexObj_Reupload` (not stated)
+- **DancingMad note:** Re-uploads into existing D3D objects (after device loss), state = 3.
+
 ### `0x10039A80` TexObj_Create
 
 - **Verified C++** (`tree/src/unit_100399D0_TexObj.cpp`): `XI_API char __thiscall TexObj_Create(int self_)`

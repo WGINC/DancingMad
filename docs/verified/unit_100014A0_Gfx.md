@@ -1,5 +1,61 @@
 # unit_100014A0_Gfx
 
+### `0x10001B50` App_RenderFrameMaskedFPU
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API undefined4 __cdecl App_RenderFrameMaskedFPU(void)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
+- **Calls directly:** `Frame_Render`, `sub_100DAF30`, `sub_10311C7A` ×4
+- **Reads globals:** `g_pGameMode`, `g_pCamera`
+- **Run by a frame** (frame_set.json): static, stack
+- **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Masks all FPU exceptions, calls Frame_Render(g_pCamera), restores the FPU control word, and on success runs an update on off_103601BC; returns success.
+
+### `0x10001BB0` App_CreateInputSystem
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API undefined4 __stdcall App_CreateInputSystem(undefined4 param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 4` (purges.json); entry EDX not established (edx_use.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
+- **Calls directly:** `fn_10005660`, `sub_100058F0`, `Allocator_Generic`
+- **Writes globals:** `g_pAppInputState`
+- **Run by a frame** (frame_set.json): static
+- **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Allocates a 0xDC4-byte input object into dword_10455C20, constructs it and initialises it with the HINSTANCE.
+
+### `0x10001D90` fn_10001D90
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API void __cdecl fn_10001D90(undefined4 param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 1 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `CTkMouse_OnMouseMove`, `fn_1015EDB0`, `fn_1025E210`
+- **Reads globals:** `g_pCursor`
+- **Run by a frame** (frame_set.json): static
+
+### `0x10001E70` fn_10001E70
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API undefined4 __cdecl fn_10001E70(char * param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 1 argument slot(s) (cdecl_args.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
+- **Calls directly:** `operator_delete`, `Allocator_Generic`
+- **Reads globals:** `c_strSpace`, `0x103D3C88`
+- **Writes globals:** `0x103D3C88`
+- **Run by a frame** (frame_set.json): static
+
+### `0x10001F20` fn_10001F20
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API undefined4 __cdecl fn_10001F20(undefined4 param_1, undefined4 param_2)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 2 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `fn_10001F40`
+- **Run by a frame** (frame_set.json): static
+
+### `0x10001F40` fn_10001F40
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API char * __cdecl fn_10001F40(char * param_1, char * param_2, int param_3)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 79 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 3 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `sub_10311EB0` ×3
+- **Reads globals:** `0x103D3C88`
+- **Run by a frame** (frame_set.json): static
+
 ### `0x10002040` Gfx_CopySurfaceRectToTexture
 
 - **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API char __cdecl Gfx_CopySurfaceRectToTexture(struct IDirect3DSurface8 *a1, const struct tagRECT *a2, unsigned int *a3, int a4)`
@@ -16,11 +72,18 @@
 - **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API char __cdecl Gfx_ProbeDeviceCaps(int a1, unsigned int *a2, int *a3)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 21 returned normally, 100 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 21, town PASS 21, town2 PASS 21, combat PASS 21, zonetoinn PASS 21
 - **Convention facts:** `ret 0` (purges.json); entry EDX not established (edx_use.json)
-- **Calls directly:** `sub_10002440` ×4
+- **Calls directly:** `fn_10002440` ×4
 - **Indirect calls:** 6, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): static
 - **DancingMad name:** `Gfx_ProbeDeviceCaps` (not stated)
 - **DancingMad note:** CheckDeviceType + CheckDeviceFormat probes, including DXT1/DXT3/DXT5.
+
+### `0x10002440` fn_10002440
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API uint32_t __cdecl fn_10002440(uint32_t param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 1 argument slot(s) (cdecl_args.json)
+- **Run by a frame** (frame_set.json): static
 
 ### `0x10002BE0` Gfx_IsGammaSupported
 
@@ -81,6 +144,46 @@
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 - **Summary** (inferred from reading the code, high confidence; docs/NAMES.md in ffximain-gfx): Reads the three gamma components into the caller's out-pointers.
 
+### `0x10002D80` fn_10002D80
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API long double __cdecl fn_10002D80(void)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); sets only AL of EAX before it returns (ret_width.json); leaves ECX, EDX untouched (reg_keeps.json)
+- **Calls directly:** `sub_10087110`
+- **Reads constants** (.rdata): 1
+- **Reads globals:** `0x10456A68`
+- **Run by a frame** (frame_set.json): static, self
+
+### `0x10002E60` fn_10002E60
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API void __cdecl fn_10002E60(undefined4 param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** pops 0 through its tail jump to 0x10002E80 (tail_purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 1 argument slot(s) (cdecl_args.json); leaves ECX, EDX untouched (reg_keeps.json)
+- **Writes globals:** `0x10456BE8`
+- **Run by a frame** (frame_set.json): static
+
+### `0x10002E80` fn_10002E80
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API void __cdecl fn_10002E80(undefined4 param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 1 argument slot(s) (cdecl_args.json); leaves ECX, EDX untouched (reg_keeps.json)
+- **Calls directly:** `fn_10002EC0`, `fn_10002EE0`, `fn_100153A0`
+- **Run by a frame** (frame_set.json): static
+
+### `0x10002EC0` fn_10002EC0
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API long double __cdecl fn_10002EC0(int param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 1 argument slot(s) (cdecl_args.json); leaves ECX, EDX untouched (reg_keeps.json)
+- **Run by a frame** (frame_set.json): static
+
+### `0x10002EE0` fn_10002EE0
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API long double __cdecl fn_10002EE0(int param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 1 argument slot(s) (cdecl_args.json); leaves ECX, EDX untouched (reg_keeps.json)
+- **Run by a frame** (frame_set.json): static
+
 ### `0x10002F20` Gfx_CreateD3DHolder
 
 - **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API char __cdecl Gfx_CreateD3DHolder(int a1, int a2, int a3, char a4, char a5)`
@@ -138,3 +241,18 @@
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 - **DancingMad name:** `Gfx_CreateDevice` (not stated)
 - **DancingMad note:** GetDeviceCaps, fills D3DPRESENT_PARAMETERS, IDirect3D8::CreateDevice with BehaviorFlags 0x40 (HW VP) or 0x20 (SW VP) by argument; device -> holder+8.
+
+### `0x100035F0` fn_100035F0
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API void * __thiscall fn_100035F0(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100035F1 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); leaves EDX untouched (reg_keeps.json)
+- **Calls directly:** `fn_10003640`, `fn_10003660`
+- **Run by a frame** (frame_set.json): static
+
+### `0x10003640` fn_10003640
+
+- **Verified C++** (`tree/src/unit_100014A0_Gfx.cpp`): `XI_API void __thiscall fn_10003640(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10003640 add ecx, 4` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); returns EAX = 0 or 1 (ret_kinds.json); leaves EDX untouched (reg_keeps.json)
+- **Run by a frame** (frame_set.json): static

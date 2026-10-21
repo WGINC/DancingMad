@@ -9,6 +9,14 @@
 - **DancingMad name:** `CMoNullProgElem_GetRuntimeClass` (not stated)
 - **DancingMad note:** unique accessor
 
+### `0x10053180` fn_10053180
+
+- **Verified C++** (`tree/src/CMoNullProgElem.cpp`): `XI_API undefined8 __thiscall fn_10053180(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10053181 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `CMoElem::Constructor`
+- **Run by a frame** (frame_set.json): static
+
 ### `0x100531A0` CMoNullProgElem::SetField138
 
 - **Verified C++** (`tree/src/CMoNullProgElem.cpp`): `void CMoNullProgElem::SetField138()`

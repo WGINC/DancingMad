@@ -12,6 +12,15 @@
 - **DancingMad name:** `CMoProcessor_InitRotationMatrices` (not stated)
 - **DancingMad note:** Part of the tiered-factory constructor chain: builds a global 4x4 identity matrix (lazy-init, own flag/buffer per call site) and copies it into the four RotationMatrix[0..3] slots, then tail-jumps into Pool_InitSlots.
 
+### `0x1006D5D0` CMoProcessor::Vec3Normalize
+
+- **Verified C++** (`tree/src/CMoProcessor.cpp`): `void __stdcall CMoProcessor::Vec3Normalize(float * param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 4` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); leaves EDX untouched (reg_keeps.json)
+- **Reads constants** (.rdata): 2
+- **Run by a frame** (frame_set.json): self
+- **Summary** (inferred from reading the code, high confidence; docs/NAMES.md in ffximain-gfx): Normalizes a 3-float vector in place (no-op on zero length).
+
 ### `0x1006E6B0` CMoProcessor::ScratchMatrixOp
 
 - **Verified C++** (`tree/src/CMoProcessor.cpp`): `int CMoProcessor::ScratchMatrixOp(int a2, int a3, int a4)`

@@ -5,7 +5,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char CXiSkeletonActor::DrawModel(_DWORD *a2, __int16 *a3, int a4, _DWORD *a5, int a6, int a7, unsigned int a8)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 1248 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 28` (purges.json); entry ECX read: `0x1002B6ED mov ebp, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CDx::SetDefaultRenderState`, `CDx::SetTransform`, `CDx::GetTransformCached` ×3, `sub_1000BE10`, `sub_10015240` ×2, `Model_BeginTranslucentPass`, `Model_TranslucentUnbindTexture`, `sub_1001D390`, `Model_CompositeTranslucentPass`, `ProjTex_CaptureToTarget`, `sub_10026210`, `Vec4_Copy`, `sub_10026F50`, `??0Iostream_init@@QAE@XZ_0` ×2, `nullsub_1` ×2, `Mat4_SetIdentity` ×5, `Mat4_Copy` ×2, `Mat4_SetScale` ×2, `Mat4_SetTranslation` ×3, `Mat4_PostMultiply` ×2, `sub_10027F60` ×3, `Mat4_TransformPointInPlace`, `CXiSkeletonActor_AnimateModels` ×2, `CXiSkeletonActor::PrepareModelsOnce`, `sub_10033DA0`, `sub_10038A70`, `Post_CaptureSceneToTarget`, `Post_DrawRotatingGhostLayers`, `sub_10039410`
+- **Calls directly:** `CDx::SetDefaultRenderState`, `CDx::SetTransform`, `CDx::GetTransformCached` ×3, `fn_1000BE10`, `sub_10015240` ×2, `Model_BeginTranslucentPass`, `Model_TranslucentUnbindTexture`, `fn_1001D390`, `Model_CompositeTranslucentPass`, `ProjTex_CaptureToTarget`, `sub_10026210`, `Vec4_Copy`, `sub_10026F50`, `fn_10027990` ×2, `fn_100279A0` ×2, `Mat4_SetIdentity` ×5, `Mat4_Copy` ×2, `Mat4_SetScale` ×2, `Mat4_SetTranslation` ×3, `Mat4_PostMultiply` ×2, `sub_10027F60` ×3, `Mat4_TransformPointInPlace`, `CXiSkeletonActor::AnimateModels` ×2, `CXiSkeletonActor::PrepareModelsOnce`, `fn_10033DA0`, `sub_10038A70`, `Post_CaptureSceneToTarget`, `Post_DrawRotatingGhostLayers`, `sub_10039410`
 - **Reads constants** (.rdata): 2
 - **Indirect calls:** 73, of which 72 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pCDx`, `g_modelsDrawnThisFrame`, `g_cfg0000`, `dword_104570F8`, `g_envMapEnabled`, `dword_10457100`, `dword_10457268`, `dword_1045726C`, `g_projTexEnabled`, `g_lightTable_End`, `g_skinningCapabilityFlag`, `g_modelPrimitiveCount`, `g_modelColor`, `dword_104574B0`, `dword_104574B4`
@@ -14,16 +14,44 @@
 - **DancingMad name:** `CXiSkeletonActor_DrawModel` (not stated)
 - **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Per-actor model draw: caches transforms, sets material colour, optional env-map and projected-screen-texture setup, default render states and fog, then animates and draws the model. (pseudocode truncated)
 
+### `0x1002C2D0` CXiSkeletonActor::AnimateModels
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `uint32_t __thiscall CXiSkeletonActor::AnimateModels(void * self, int * param_1, int param_2, uint32_t param_3, undefined4 xi_s4)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 16` (purges.json); entry ECX read: `0x1002C2D3 mov edi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
+- **Calls directly:** `Model_AnimateAndPose`, `CYyModel::GetField44Addr`
+- **Run by a frame** (frame_set.json): stack
+- **DancingMad name:** `Model_AnimateEntry` (not stated) — differs from this repository's `CXiSkeletonActor_AnimateModels`
+- **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Walks the actor's model list (sub_1002B5A0) calling Model_AnimateAndPose on each; if all succeed sets flags(+0x30)\|=0x12 and returns 1, else 0.
+
 ### `0x1002C360` CXiSkeletonActor::PrepareModelsOnce
 
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `void CXiSkeletonActor::PrepareModelsOnce(int a2, int a3)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 94 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x1002C362 mov edi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CYyModelBase::DrawLit`, `CYyModel_GetField44Addr`
+- **Calls directly:** `CYyModelBase::DrawLit`, `CYyModel::GetField44Addr`
 - **Indirect calls:** 2, of which 2 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pCDx`
 - **Run by a frame** (frame_set.json): stack
 - **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Once per update (guarded by flag 4 at this+48) calls sub_1002A3B0 on every model in the actor's list, then resets texture stage 1 TEXTURETRANSFORMFLAGS/TEXCOORDINDEX to 0.
+
+### `0x1002C3E0` CXiSkeletonActor::GetElemThunk
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `undefined4 __thiscall CXiSkeletonActor::GetElemThunk(void * self, undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 xi_s5, undefined4 xi_s6, undefined4 xi_s7)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 28` (purges.json); entry ECX read: `through a callee` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `fn_1002C400`
+- **Run by a frame** (frame_set.json): self, stack
+- **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Forwards (this,a3,a4,a5) to sub_1002C400, dropping the other arguments.
+
+### `0x1002C5C0` CXiSkeletonActor::GetModelElem
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `int __thiscall CXiSkeletonActor::GetModelElem(void * self, uint32_t param_1, int param_2)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 8` (purges.json); entry ECX read: `through a callee` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `fn_1002A9B0`, `CYyModel::GetField44Addr`
+- **Run by a frame** (frame_set.json): self, stack
+- **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Finds the a3-th model in the actor's model list and returns sub_1002A9B0(model, idx, a2) (an element pointer).
 
 ### `0x100343C0` CXiSkeletonActor::PoseCompose
 
@@ -41,7 +69,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char * CXiSkeletonActor::GetEnglishName()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10082F21 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
-- **Calls directly:** `CXiActor_IsInModelSlotTable`, `Entity_BuildDisplayName`
+- **Calls directly:** `CXiActor::IsInModelSlotTable`, `Entity_BuildDisplayName`
 - **Writes globals:** `g_actorNameBuffer`
 - **Run by a frame** (frame_set.json): stack
 - **DancingMad name:** `CXiSkeletonActor_GetEnglishName` (not stated)
@@ -570,7 +598,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `int CXiSkeletonActor::Constructor_1Arg(int a2)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x100C52A4 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `Camera_GetField50`, `Actor_InitIndexTable`, `Vec4_Copy` ×3, `??0Iostream_init@@QAE@XZ_0`, `CYyModel_Constructor`, `LinkNode_Init`, `OcclusionQuery_Init`, `CMoTask_RegisterWithMng`, `ActorHandle_Constructor`, `CXiActor_IsModelMissingOrFlag2000`, `CXiActor_GetModelField170`, `CXiActor_GetModelByteEE` ×4, `Net_SendPacket00COnce`, `CXiCollisionActor_Constructor`, `CXiSkeletonActor::Init`, `Actor_SetSlotTableEntry` ×3
+- **Calls directly:** `Camera_GetField50`, `Actor_InitIndexTable`, `Vec4_Copy` ×3, `fn_10027990`, `CYyModel::Constructor`, `LinkNode_Init`, `OcclusionQuery_Init`, `CMoTask_RegisterWithMng`, `ActorHandle_Constructor`, `CXiActor::IsModelMissingOrFlag2000`, `CXiActor::GetModelField170`, `CXiActor::GetModelByteEE` ×4, `Net_SendPacket00COnce`, `CXiCollisionActor::Constructor`, `CXiSkeletonActor::Init`, `Actor_SetSlotTableEntry` ×3
 - **Run by a frame** (frame_set.json): static
 
 ### `0x100C5540` CXiSkeletonActor::ScalarDeletingDtor
@@ -586,7 +614,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `int CXiSkeletonActor::Constructor_2Arg(_DWORD *a2, int a3)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x100C5564 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `Actor_InitIndexTable`, `Vec4_Copy` ×3, `??0Iostream_init@@QAE@XZ_0`, `CYyModel_Constructor`, `LinkNode_Init`, `OcclusionQuery_Init`, `CMoTask_RegisterWithMng`, `ActorHandle_Constructor`, `CXiActor_IsModelMissingOrFlag2000`, `CXiActor_GetModelField170`, `CXiActor_GetModelByteEE` ×4, `Net_SendPacket00COnce`, `CXiCollisionActor_Constructor`, `CXiSkeletonActor::Init`, `CXiSkeletonActor::LoadSkeletonResource`, `Actor_SetSlotTableEntry` ×3
+- **Calls directly:** `Actor_InitIndexTable`, `Vec4_Copy` ×3, `fn_10027990`, `CYyModel::Constructor`, `LinkNode_Init`, `OcclusionQuery_Init`, `CMoTask_RegisterWithMng`, `ActorHandle_Constructor`, `CXiActor::IsModelMissingOrFlag2000`, `CXiActor::GetModelField170`, `CXiActor::GetModelByteEE` ×4, `Net_SendPacket00COnce`, `CXiCollisionActor::Constructor`, `CXiSkeletonActor::Init`, `CXiSkeletonActor::LoadSkeletonResource`, `Actor_SetSlotTableEntry` ×3
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 
 ### `0x100C56E0` CXiSkeletonActor::Constructor_3Arg
@@ -594,7 +622,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `int CXiSkeletonActor::Constructor_3Arg(_DWORD *a2, int a3, int a4)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 12` (purges.json); entry ECX read: `0x100C56E4 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `Actor_InitIndexTable`, `Vec4_Copy` ×3, `??0Iostream_init@@QAE@XZ_0`, `CYyModel_Constructor`, `LinkNode_Init`, `OcclusionQuery_Init`, `CMoTask_RegisterWithMng`, `ActorHandle_Constructor`, `CXiActor_IsModelMissingOrFlag2000`, `CXiActor_GetModelField170`, `CXiActor_GetModelByteEE` ×4, `Net_SendPacket00COnce`, `CXiCollisionActor_Constructor`, `CXiSkeletonActor::Init`, `CXiSkeletonActor::LoadSkeletonResource`, `Actor_SetSlotTableEntry` ×3
+- **Calls directly:** `Actor_InitIndexTable`, `Vec4_Copy` ×3, `fn_10027990`, `CYyModel::Constructor`, `LinkNode_Init`, `OcclusionQuery_Init`, `CMoTask_RegisterWithMng`, `ActorHandle_Constructor`, `CXiActor::IsModelMissingOrFlag2000`, `CXiActor::GetModelField170`, `CXiActor::GetModelByteEE` ×4, `Net_SendPacket00COnce`, `CXiCollisionActor::Constructor`, `CXiSkeletonActor::Init`, `CXiSkeletonActor::LoadSkeletonResource`, `Actor_SetSlotTableEntry` ×3
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 
 ### `0x100C5880` CXiSkeletonActor::Constructor_4Arg
@@ -602,7 +630,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `int CXiSkeletonActor::Constructor_4Arg(_DWORD *a2, int a3, int a4, int a5)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 16` (purges.json); entry ECX read: `0x100C5884 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `Actor_InitIndexTable`, `Vec4_Copy` ×3, `??0Iostream_init@@QAE@XZ_0`, `CYyModel_Constructor`, `LinkNode_Init`, `OcclusionQuery_Init`, `CMoTask_RegisterWithMng`, `ActorHandle_Constructor`, `Net_SendPacket00COnce`, `CXiCollisionActor_Constructor`, `CXiSkeletonActor::Init`, `CXiSkeletonActor::LoadSkeletonResource`, `Actor_SetSlotTableEntry` ×3
+- **Calls directly:** `Actor_InitIndexTable`, `Vec4_Copy` ×3, `fn_10027990`, `CYyModel::Constructor`, `LinkNode_Init`, `OcclusionQuery_Init`, `CMoTask_RegisterWithMng`, `ActorHandle_Constructor`, `Net_SendPacket00COnce`, `CXiCollisionActor::Constructor`, `CXiSkeletonActor::Init`, `CXiSkeletonActor::LoadSkeletonResource`, `Actor_SetSlotTableEntry` ×3
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 
 ### `0x100C59B0` CXiSkeletonActor::Constructor_Factory
@@ -610,7 +638,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `int CXiSkeletonActor::Constructor_Factory(_DWORD *a2, int a3, int a4)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 82 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 82, town PASS 77, town2 PASS 77, combat PASS 77, zonetoinn PASS 77
 - **Convention facts:** `ret 12` (purges.json); entry ECX read: `0x100C59B3 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `nullsub_12` ×7, `Actor_InitIndexTable`, `Vec4_Copy` ×3, `??0Iostream_init@@QAE@XZ_0`, `CYyModel_Constructor`, `LinkNode_Init`, `OcclusionQuery_Init`, `CMoTaskMng_Forward10075120`, `ActorHandle_Constructor`, `Net_SendPacket00COnce`, `CXiCollisionActor_Constructor`, `CXiSkeletonActor::Init`, `CXiSkeletonActor::LoadSkeletonResource`
+- **Calls directly:** `fn_10017D30` ×7, `Actor_InitIndexTable`, `Vec4_Copy` ×3, `fn_10027990`, `CYyModel::Constructor`, `LinkNode_Init`, `OcclusionQuery_Init`, `CMoTaskMng::Forward10075120`, `ActorHandle_Constructor`, `Net_SendPacket00COnce`, `CXiCollisionActor::Constructor`, `CXiSkeletonActor::Init`, `CXiSkeletonActor::LoadSkeletonResource`
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 
 ### `0x100C5C00` CXiSkeletonActor::DestructorBody
@@ -618,7 +646,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char CXiSkeletonActor::DestructorBody()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 77 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** pops 0 through its tail jump to 0x100A8CA0 (tail_purges.json); entry ECX read: `0x100C5C01 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
-- **Calls directly:** `nullsub_1`, `CYyModel_Destructor`, `CMoGeneratorClone_Kill` ×2, `LinkNode_Unlink`, `OcclusionQuery_Release`, `ResHandle_FreeIfUnreferenced`, `CMoResource_ReleaseChain` ×3, `ActorHandle_Destructor`, `ActorHandle_Resolve`, `Actor_UnlinkAllAttachLists`, `CXiSkeletonActor_DeleteOwnedList`, `sub_10157660`
+- **Calls directly:** `fn_100279A0`, `CYyModel::Destructor`, `CMoGeneratorClone_Kill` ×2, `LinkNode_Unlink`, `OcclusionQuery_Release`, `ResHandle_FreeIfUnreferenced`, `CMoResource::ReleaseChain` ×3, `ActorHandle_Destructor`, `ActorHandle_Resolve`, `Actor_UnlinkAllAttachLists`, `CXiSkeletonActor_DeleteOwnedList`, `fn_10157660`
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pTargetMng`
 - **Run by a frame** (frame_set.json): stack
@@ -630,7 +658,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `int CXiSkeletonActor::Init()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100C5D63 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
-- **Calls directly:** `Vec4_Copy` ×2, `Vec3_Copy`, `sub_100814F0`, `sub_100D5430`, `sub_100D6240`
+- **Calls directly:** `Vec4_Copy` ×2, `Vec3_Copy`, `sub_100814F0`, `fn_100D5430`, `fn_100D6240`
 - **Reads constants** (.rdata): 3
 - **Indirect calls:** 11, of which 11 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `c_skelActorInit_848`, `c_skelActorInit_84C`, `c_skelActorInit_850`, `c_skelActorInit_61C`, `c_skelActorInit_620`, `c_skelActorInit_624`, `c_skelActorInit_628`, `c_skelActorInit_5FC`, `c_skelActorInit_600`, `c_skelActorInit_604`, `c_skelActorInit_608`, `c_skelActorInit_9D8`, `c_skelActorInit_9DC`, `c_skelActorInit_9E0`, `c_skelActorInit_9E4`, `c_skelActorInit_60C`, `c_skelActorInit_610`, `c_skelActorInit_614`, `c_skelActorInit_618`, `c_skelActorInit_62C`, `c_skelActorInit_630`, `c_skelActorInit_634`, `c_skelActorInit_638`, `c_skelActorInit_7B4`, `c_skelActorInit_7B8`, `c_skelActorInit_7BC`, `c_skelActorInit_7C0`, `g_actorSerialCounter`
@@ -644,7 +672,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `int CXiSkeletonActor::OnMove()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 86 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 86, town PASS 96, town2 PASS 96, combat PASS 96, zonetoinn PASS 96
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100C63D8 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
-- **Calls directly:** `CDx::SetTransform`, `CDx::GetTransformCached` ×3, `Camera_GetFrameScale` ×6, `Camera_GetFloat2DC`, `Camera_GetFloat2E0`, `Camera_GetMatrix154Ptr` ×2, `sub_10026E00` ×2, `Vec4_Set` ×2, `Vec4_Copy` ×6, `Vec3_Copy` ×9, `Vec3_AddInPlace` ×5, `Vec3_Add_10026FA0` ×2, `Vec3_Sub` ×4, `??XConvexDecomposition@@YAAAVfloat3@0@AAV10@M@Z` ×2, `sub_100274B0` ×2, `sub_10027530` ×3, `Gfx_ProjectWorldToClip`, `Gfx_NdcToScreen`, `??0Iostream_init@@QAE@XZ_0` ×5, `nullsub_1` ×7, `Mat4_SetIdentity`, `Mat4_SetScale`, `Mat4_PostRotateY` ×2, `Mat4_SetTranslation`, `sub_10028170`, `Mat4_TransformPointInPlace`, `sub_10028230` ×2, `sub_10028370`, `CYyModel_GetField44Addr`, `sub_1002C270`, `sub_1002C2A0`, `Skel_OffsetAllTranslations`, `sub_10039410`, `sub_1003BA20`, `sub_100553C0`, `sub_1006CA20`, `ResourceHandle_IsResident` ×2, `ActorHandle_Resolve` ×3, `CXiActor_ModelTest95790`, `CXiActor_ModelTest95680` ×7, `CXiActor_ModelTest956A0` ×7, `CXiActor_GetModelField170` ×33, `sub_10084670`, `sub_100846D0`, `sub_100846F0`, `sub_10085000` ×2, `CXiActor_IsInModelSlotTable`, `sub_10085BF0` ×2, `sub_10087060` ×2, `sub_1008E130`, `Entity_GetIndexedPtr`, `sub_100A4ED0`, `sub_100A5E10`, `sub_100C8280`, `sub_100C83C0` ×2, `sub_100C8ED0` ×2, `sub_100C9330` ×2, `sub_100C9810`, `sub_100C9C10`, `sub_100CA310`, `sub_100CA730`, `sub_100CA8C0` ×2, `sub_100CAA60`, `sub_100CAF90`, `sub_100CB390`, `sub_100CB400`, `sub_100CD040`, `sub_100CDF90`, `sub_100D1070`, `sub_100D4BC0`, `sub_1018B8F0`
+- **Calls directly:** `CDx::SetTransform`, `CDx::GetTransformCached` ×3, `Camera_GetFrameScale` ×6, `Camera_GetFloat2DC`, `Camera_GetFloat2E0`, `Camera_GetMatrix154Ptr` ×2, `fn_10026E00` ×2, `Vec4_Set` ×2, `Vec4_Copy` ×6, `Vec3_Copy` ×9, `Vec3_AddInPlace` ×5, `Vec3_Add_10026FA0` ×2, `Vec3_Sub` ×4, `fn_100272B0` ×2, `sub_100274B0` ×2, `sub_10027530` ×3, `Gfx_ProjectWorldToClip`, `Gfx_NdcToScreen`, `fn_10027990` ×5, `fn_100279A0` ×7, `Mat4_SetIdentity`, `Mat4_SetScale`, `Mat4_PostRotateY` ×2, `Mat4_SetTranslation`, `fn_10028170`, `Mat4_TransformPointInPlace`, `fn_10028230` ×2, `sub_10028370`, `CYyModel::GetField44Addr`, `fn_1002C270`, `fn_1002C2A0`, `Skel_OffsetAllTranslations`, `sub_10039410`, `sub_1003BA20`, `sub_100553C0`, `fn_1006CA20`, `ResourceHandle_IsResident` ×2, `ActorHandle_Resolve` ×3, `CXiActor_ModelTest95790`, `CXiActor_ModelTest95680` ×7, `CXiActor_ModelTest956A0` ×7, `CXiActor::GetModelField170` ×33, `fn_10084670`, `sub_100846D0`, `sub_100846F0`, `sub_10085000` ×2, `CXiActor::IsInModelSlotTable`, `fn_10085BF0` ×2, `fn_10087060` ×2, `sub_1008E130`, `Entity_GetIndexedPtr`, `sub_100A4ED0`, `fn_100A5E10`, `fn_100C8280`, `sub_100C83C0` ×2, `sub_100C8ED0` ×2, `sub_100C9330` ×2, `sub_100C9810`, `sub_100C9C10`, `sub_100CA310`, `sub_100CA730`, `sub_100CA8C0` ×2, `sub_100CAA60`, `sub_100CAF90`, `sub_100CB390`, `sub_100CB400`, `sub_100CD040`, `fn_100CDF90`, `sub_100D1070`, `sub_100D4BC0`, `fn_1018B8F0`
 - **Reads constants** (.rdata): 13
 - **Indirect calls:** 91, of which 88 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `c_skelActorOnMove_init0`, `c_skelActorOnMove_init1`, `c_skelActorOnMove_init2`, `c_skelActorOnMove_init3`, `g_pCDx`, `g_pCamera`, `dword_1047BC94`, `XiControlActor_isFirstPersonView`, `g_pXiZone`
@@ -668,7 +696,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `void CXiSkeletonActor::PerActor_FourBucketStaggeredUpdate()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 30 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 30, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100CBDE9 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
-- **Calls directly:** `CDx::SetTransform`, `GetFrameCounter` ×4, `Camera_GetField50`, `Camera_GetViewportWidth`, `Camera_GetViewportHeight`, `Vec4_Set` ×2, `Vec4_Copy` ×2, `Vec3_Copy` ×5, `Vec3_AddInPlace`, `Vec3_Add_10026FA0` ×4, `Vec3_Sub` ×3, `Vec3_Scale`, `??0Iostream_init@@QAE@XZ_0`, `nullsub_1`, `Mat4_Copy` ×3, `Mat4_BuildScale` ×2, `Mat4_PostRotateX` ×3, `Mat4_PostRotateY` ×3, `Mat4_PostRotateZ` ×3, `Mat4_SetRow3` ×2, `Mat4_TransformNormal` ×2, `CYyModel_GetField44Addr`, `CXiSkeletonActor::DrawModel` ×2, `CXiSkeletonActor_AnimateModels`, `Shadow_SmoothLightDirection`, `Occlusion_QueryScreenRect`, `CXiActor_ModelTest956A0`, `CXiActor_GetModelField170` ×5, `CXiActor_HasNonzeroField150or158`, `CXiActor_IsModelMissingOrSuppressed`, `CXiActor_TestModelFlag128_8`, `CXiActor_TestModelFlags100000_200000_4000` ×2, `CXiActor_IsInModelSlotTable`, `Actor_SelectNearestLights`, `Actor_SetCameraFromModelPoints` ×3, `CXiSkeletonActor_CalcGroundTiltMatrix` ×2, `CXiSkeletonActor_UpdateHeadLook`, `Actor_PrepareDrawGlobals`, `_D3DXMatrixLookAtRH@16` ×2, `sub_10311C2C`, `_atexit` ×4
+- **Calls directly:** `CDx::SetTransform`, `GetFrameCounter` ×4, `Camera_GetField50`, `Camera_GetViewportWidth`, `Camera_GetViewportHeight`, `Vec4_Set` ×2, `Vec4_Copy` ×2, `Vec3_Copy` ×5, `Vec3_AddInPlace`, `Vec3_Add_10026FA0` ×4, `Vec3_Sub` ×3, `Vec3_Scale`, `fn_10027990`, `fn_100279A0`, `Mat4_Copy` ×3, `Mat4_BuildScale` ×2, `Mat4_PostRotateX` ×3, `Mat4_PostRotateY` ×3, `Mat4_PostRotateZ` ×3, `Mat4_SetRow3` ×2, `Mat4_TransformNormal` ×2, `CYyModel::GetField44Addr`, `CXiSkeletonActor::DrawModel` ×2, `CXiSkeletonActor::AnimateModels`, `Shadow_SmoothLightDirection`, `Occlusion_QueryScreenRect`, `CXiActor_ModelTest956A0`, `CXiActor::GetModelField170` ×5, `CXiActor::HasNonzeroField150or158`, `CXiActor::IsModelMissingOrSuppressed`, `CXiActor_TestModelFlag128_8`, `CXiActor::TestModelFlags100000_200000_4000` ×2, `CXiActor::IsInModelSlotTable`, `Actor_SelectNearestLights`, `Actor_SetCameraFromModelPoints` ×3, `CXiSkeletonActor_CalcGroundTiltMatrix` ×2, `CXiSkeletonActor_UpdateHeadLook`, `Actor_PrepareDrawGlobals`, `_D3DXMatrixLookAtRH@16` ×2, `sub_10311C2C`, `_atexit` ×4
 - **Reads constants** (.rdata): 13
 - **Indirect calls:** 61, of which 46 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pAppSettings`, `g_pCDx`, `g_shadowSetting`, `g_cfg0020`, `pTexture`, `g_translucentTarget`, `g_actorShadowMode`, `g_shadowCasterDistance`, `dword_1045B810`, `g_nearestLight`, `PerActor_FourBucketStaggeredUpdate_staticGuards`, `g_actorUpdateCounter`, `g_actorUpdateInterval`, `g_pXiZone`
@@ -682,7 +710,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char CXiSkeletonActor::OcclusionClip()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100CCF54 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
-- **Calls directly:** `Camera_GetViewportWidth`, `Camera_GetViewportHeight`, `CYyModel_GetField44Addr`, `sub_1002C270`, `Occlusion_QueryScreenRect`
+- **Calls directly:** `Camera_GetViewportWidth`, `Camera_GetViewportHeight`, `CYyModel::GetField44Addr`, `fn_1002C270`, `Occlusion_QueryScreenRect`
 - **Reads constants** (.rdata): 1
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `pTexture`, `g_translucentTarget`
@@ -695,17 +723,55 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char * CXiSkeletonActor::SetMotion(int *a2, float a3)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x100CD491 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CYyMotionQue_SetSlotMotion`, `CYyModel_GetField44Addr` ×2
+- **Calls directly:** `CYyMotionQue::SetSlotMotion`, `CYyModel::GetField44Addr` ×2
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 - **DancingMad name:** `CXiSkeletonActor_SetMotion` (not stated)
 - **DancingMad note:** PS2 slot 84 -> PC 165 (SetMotion(YmResource*, float), ret 8). PS2 base body is empty; PC implements it on the model sub-object at +0x674. Medium.
+
+### `0x100CD4E0` fn_100CD4E0
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API void __thiscall fn_100CD4E0(void * self_, undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, int param_7)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 28` (purges.json); entry ECX read: `0x100CD4E1 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `CYyMotionQue::SetSlotMotion`, `CYyModel::GetField44Addr` ×2
+- **Run by a frame** (frame_set.json): self, stack
+
+### `0x100CD540` fn_100CD540
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API undefined4 __thiscall fn_100CD540(void * self_, int * param_1, uint32_t param_2, undefined4 param_3, float param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, int param_8, int param_9, undefined4 param_10, undefined4 param_11)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 30 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 44` (purges.json); entry ECX read: `0x100CD560 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `fn_10017D20` ×2, `CYyMotionQue::SetSlotMotion` ×2, `fn_1001A6E0` ×2, `CYyModel::GetField44Addr` ×8, `CMoResource::GetParent` ×2, `ResourceIter_FindFirst` ×2, `ResourceIter_FindNext` ×2, `CXiActor::GetModelByteEE` ×6, `sub_10312872` ×2
+- **Reads constants** (.rdata): 1
+- **Reads globals:** `g_resourceFindDepth`, `0x1048A38C`
+- **Writes globals:** `g_resourceFindDepth`, `0x1048A38C`
+- **Run by a frame** (frame_set.json): stack
+
+### `0x100CDF90` fn_100CDF90
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API void __thiscall fn_100CDF90(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 25 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100CDF94 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `Camera_GetFrameScale`, `ResourceHandle_IsResident`, `CMoResource::FindInScope`, `fn_100CD4E0`, `CXiSkeletonActor::IsReadCompleteBody`, `sub_103149A0`
+- **Reads constants** (.rdata): 1
+- **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Writes globals:** `0x1048A38C`
+- **Run by a frame** (frame_set.json): stack
+
+### `0x100CE160` fn_100CE160
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API void __thiscall fn_100CE160(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100CE160 add ecx, 0x674` (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `fn_1001B170`, `CYyModel::GetField44Addr`
+- **Run by a frame** (frame_set.json): static
 
 ### `0x100CE480` CXiSkeletonActor::ReverseFindRes
 
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `_DWORD * CXiSkeletonActor::ReverseFindRes(_DWORD *a2, int a3, int a4, int a5, int a6, char a7)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 30 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 30, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 24` (purges.json); entry ECX read: `0x100CE484 mov ebx, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
-- **Calls directly:** `List_GetTail`, `ResourceHandle_IsResident` ×3, `CMoResource_GetParent` ×3, `ResourceIter_FindFirst` ×3, `ResourceIter_FindNext` ×3
+- **Calls directly:** `List_GetTail`, `ResourceHandle_IsResident` ×3, `CMoResource::GetParent` ×3, `ResourceIter_FindFirst` ×3, `ResourceIter_FindNext` ×3
 - **Indirect calls:** 3, of which 3 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_resourceFindDepth`
 - **Writes globals:** `g_resourceFindDepth`
@@ -718,7 +784,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `_DWORD * CXiSkeletonActor::ActorFindResource(_DWORD *a2, int a3, int a4)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 28 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 28, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 12` (purges.json); entry ECX read: `0x100CE9B6 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CYyModelBase_GetPartList`, `CYyModel_GetField44Addr`, `ResourceHandle_IsResident`, `CMoResource_GetParent`, `YmResourceFile_FindResourceUnder`, `ResourceIter_FindFirst`
+- **Calls directly:** `CYyModelBase::GetPartList`, `CYyModel::GetField44Addr`, `ResourceHandle_IsResident`, `CMoResource::GetParent`, `YmResourceFile_FindResourceUnder`, `ResourceIter_FindFirst`
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_resourceFindDepth`
 - **Writes globals:** `g_resourceFindDepth`
@@ -731,7 +797,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `_DWORD * CXiSkeletonActor::ActorFindResourceNth(_DWORD *a2, int a3, int a4, int a5)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 28 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 28, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 16` (purges.json); entry ECX read: `0x100CEB07 mov edi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CYyModelBase_GetPartList`, `CYyModel_GetField44Addr`, `ResourceHandle_IsResident`, `CMoResource_GetParent`, `ResourceIter_FindFirst` ×2, `ResourceIter_FindNext` ×2
+- **Calls directly:** `CYyModelBase::GetPartList`, `CYyModel::GetField44Addr`, `ResourceHandle_IsResident`, `CMoResource::GetParent`, `ResourceIter_FindFirst` ×2, `ResourceIter_FindNext` ×2
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_resourceFindDepth`
 - **Writes globals:** `g_resourceFindDepth`
@@ -744,7 +810,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `int CXiSkeletonActor::ActorGetResourceCount(int a2, int a3)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 26 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 26, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x100CEC96 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CYyModelBase_GetPartList`, `CYyModel_GetField44Addr`, `ResourceHandle_IsResident`, `CMoResource_GetParent`, `ResourceIter_FindFirst` ×2, `ResourceIter_FindNext` ×2
+- **Calls directly:** `CYyModelBase::GetPartList`, `CYyModel::GetField44Addr`, `ResourceHandle_IsResident`, `CMoResource::GetParent`, `ResourceIter_FindFirst` ×2, `ResourceIter_FindNext` ×2
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_resourceFindDepth`
 - **Writes globals:** `g_resourceFindDepth`
@@ -795,12 +861,21 @@
 - **DancingMad name:** `CXiSkeletonActor_SetAttack_SchStatus` (not stated)
 - **DancingMad note:** PS2 SetAttack(CXiSchStatus*) -> PC 173. HIGH: calls SetAction through vslot 166 (+0x298), as PS2 calls it through vtbl+0x154. MSVC grouped/reversed the overloads.
 
+### `0x100CF100` fn_100CF100
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API undefined8 __thiscall fn_100CF100(void * self_, undefined4 xi_s1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x100CF102 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
+- **Calls directly:** `CXiActor::GetModelField170`, `sub_100D5FE0`, `sub_100D6180`, `fn_100D6240`
+- **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Run by a frame** (frame_set.json): self, stack
+
 ### `0x100CF200` CXiSkeletonActor::vf172
 
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `void CXiSkeletonActor::vf172(int a2)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x100CF200 add ecx, 0x674` (ecx_use.json); entry EDX not established (edx_use.json)
-- **Calls directly:** `CYyModelBase_ForwardToField24`, `CYyModel_GetField44Addr`
+- **Calls directly:** `CYyModelBase_ForwardToField24`, `CYyModel::GetField44Addr`
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 
 ### `0x100CF210` CXiSkeletonActor::SetModel
@@ -808,19 +883,35 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char CXiSkeletonActor::SetModel(int a2)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x100CF21A mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `nullsub_12`, `Actor_GetPercentScaleByIndex` ×6, `Actor_LookupPercentScaleA`, `Actor_LookupPercentScaleB`, `Actor_SetPair14`, `Actor_SetPair1C`, `CYyModelBase_SetResourceAndRebuild`, `CYyModelBase_AddPartFromResource`, `CYyModel_CreateModelBase`, `CMoGeneratorClone::CreateInstance`, `ResourceHandle_IsResident`, `CMoResource_AddRefChain` ×3, `CMoResource_FindInScope`, `ResourceHandle_Deref`, `ResourceIter_FindFirst` ×2, `ResourceIter_FindNext` ×2, `CXiActor_GetModelByteEF` ×2, `CXiActor_GetModelFlags120Top2` ×4, `CXiActor_GetModelFlags130Top2`, `CXiActor_GetModelFloat9AEC0`, `CXiActor_SpawnResourceGenerators`
+- **Calls directly:** `fn_10017D30`, `Actor_GetPercentScaleByIndex` ×6, `Actor_LookupPercentScaleA`, `Actor_LookupPercentScaleB`, `Actor_SetPair14`, `Actor_SetPair1C`, `CYyModelBase::SetResourceAndRebuild`, `CYyModelBase::AddPartFromResource`, `CYyModel::CreateModelBase`, `CMoGeneratorClone::CreateInstance`, `ResourceHandle_IsResident`, `CMoResource_AddRefChain` ×3, `CMoResource::FindInScope`, `ResourceHandle_Deref`, `ResourceIter_FindFirst` ×2, `ResourceIter_FindNext` ×2, `CXiActor::GetModelByteEF` ×2, `CXiActor::GetModelFlags120Top2` ×4, `CXiActor::GetModelFlags130Top2`, `CXiActor::GetModelFloat9AEC0`, `CXiActor::SpawnResourceGenerators`
 - **Indirect calls:** 10, of which 10 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pMeshResourceMng`
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 - **DancingMad name:** `CXiSkeletonActor_SetModel` (candidate)
 - **DancingMad note:** PS2 XiSkeletonActor::SetModel(YmResource*) slot 83 -> PC 164. Upgraded from _Candidate: now inside the confirmed positional run (163 OnChangeEquip, 166-168 action cluster).
 
+### `0x100CFA50` fn_100CFA50
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API void __thiscall fn_100CFA50(void * self_, int * param_1, void * param_2)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x100CFA59 mov ebp, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `CYyModelBase::AddPartFromResource`, `CMoResource_AddRefChain`, `ResourceIter_FindFirst`, `ResourceIter_FindNext`, `CXiActor::SpawnResourceGenerators`
+- **Run by a frame** (frame_set.json): static, stack
+
+### `0x100CFAD0` fn_100CFAD0
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API undefined * __thiscall fn_100CFAD0(void * self_, int param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 4` (purges.json); entry ECX read: `through a callee` (ecx_use.json); entry EDX not established (edx_use.json)
+- **Calls directly:** `sub_100CFB40`
+- **Run by a frame** (frame_set.json): stack
+
 ### `0x100CFC10` CXiSkeletonActor::Slot244_Unknown
 
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char CXiSkeletonActor::Slot244_Unknown(int a2, int a3, int a4)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 12` (purges.json); entry ECX read: `0x100CFC17 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
-- **Calls directly:** `Vec4_Copy` ×2, `??0Iostream_init@@QAE@XZ_0`, `nullsub_1` ×2, `Mat4_SetIdentity`, `Mat4_PostRotateY`, `Mat4_SetTranslation`, `Mat4_PostMultiply`, `Mat4_TransformCoordInPlace`
+- **Calls directly:** `Vec4_Copy` ×2, `fn_10027990`, `fn_100279A0` ×2, `Mat4_SetIdentity`, `Mat4_PostRotateY`, `Mat4_SetTranslation`, `Mat4_PostMultiply`, `Mat4_TransformCoordInPlace`
 - **Reads constants** (.rdata): 3
 - **Indirect calls:** 3, of which 3 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): self, stack
@@ -852,7 +943,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `void CXiSkeletonActor::OnDrawName()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 84 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 84, town PASS 82, town2 PASS 82, combat PASS 82, zonetoinn PASS 82
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100D051E mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
-- **Calls directly:** `Quat_SetIdentity`, `ActorHandle_Resolve`, `CXiActor_TestModelFlag128_8`, `Entity_GetIndexedPtr`, `Entity_IsModelIdB22toB31`, `CXiSkeletonActor_DrawNameIfVisible`, `CXiSkeletonActor_DrawName2IfVisible`, `sub_101CC4F0`, `_sprintf` ×2
+- **Calls directly:** `Quat_SetIdentity`, `ActorHandle_Resolve`, `CXiActor_TestModelFlag128_8`, `Entity_GetIndexedPtr`, `Entity_IsModelIdB22toB31`, `CXiSkeletonActor::DrawNameIfVisible`, `CXiSkeletonActor::DrawName2IfVisible`, `sub_101CC4F0`, `_sprintf` ×2
 - **Indirect calls:** 7, of which 7 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `byte_1047D694`, `byte_1047D695`, `XiControlActor_isFirstPersonView`
 - **Run by a frame** (frame_set.json): self, stack
@@ -874,19 +965,37 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char __stdcall CXiSkeletonActor::ProjectToScreen(int a1, int a2, int a3)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 12` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
-- **Calls directly:** `CDx::SetTransform` ×4, `CDx::GetTransformCached` ×2, `Camera_GetViewMatrixPtr`, `Vec4_Set`, `Gfx_ProjectWorldToClip`, `Gfx_NdcToScreen`, `??0Iostream_init@@QAE@XZ_0` ×3, `nullsub_1` ×6, `Mat4_SetIdentity`, `Mat4_SetTranslation`
+- **Calls directly:** `CDx::SetTransform` ×4, `CDx::GetTransformCached` ×2, `Camera_GetViewMatrixPtr`, `Vec4_Set`, `Gfx_ProjectWorldToClip`, `Gfx_NdcToScreen`, `fn_10027990` ×3, `fn_100279A0` ×6, `Mat4_SetIdentity`, `Mat4_SetTranslation`
 - **Reads constants** (.rdata): 1
 - **Reads globals:** `g_pCDx`
 - **Run by a frame** (frame_set.json): stack
 - **DancingMad name:** `CXiSkeletonActor_ProjectToScreen` (author-inferred)
 - **DancingMad note:** AUTHOR-INFERRED, PC-only virtual (slot 160, ret 0xC). Builds view/projection via CDx_GetTransformCached/SetTransform and projects a point -- the PC counterpart of PS2 YmDB::Translate3Dto2D, promoted to a vtable slot.
 
+### `0x100D0880` CXiSkeletonActor::DrawNameIfVisible
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `void __thiscall CXiSkeletonActor::DrawNameIfVisible(void * self, undefined4 * param_1, char * param_2, float param_3, uint32_t param_4, uint32_t param_5)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 20` (purges.json); entry ECX read: `0x100D0880 cmp word ptr [ecx + 0xb2], 0` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `Actor_DrawWorldText`
+- **Run by a frame** (frame_set.json): stack
+- **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Calls Actor_DrawWorldText(a2..a6) unless the actor's u16 at +0xB2 is nonzero.
+
+### `0x100D08B0` CXiSkeletonActor::DrawName2IfVisible
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `void __thiscall CXiSkeletonActor::DrawName2IfVisible(void * self, undefined4 * param_1, char * param_2, float param_3)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 12` (purges.json); entry ECX read: `0x100D08B0 cmp word ptr [ecx + 0xb2], 0` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `DrawNameplateSecondString`
+- **Run by a frame** (frame_set.json): stack
+- **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Calls sub_10086900(a2,a3,a4), the 3-argument text-draw variant, unless the actor's u16 at +0xB2 is nonzero.
+
 ### `0x100D08E0` CXiSkeletonActor::GetWidthScale
 
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `double CXiSkeletonActor::GetWidthScale()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); float result equal at its declared precision (the original returns ST0 unrounded); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100D08E2 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
-- **Calls directly:** `CYyModel_GetField44Addr`, `sub_10035250`
+- **Calls directly:** `CYyModel::GetField44Addr`, `fn_10035250`
 - **Reads constants** (.rdata): 3
 - **Indirect calls:** 4, of which 4 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
@@ -898,7 +1007,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `double CXiSkeletonActor::GetHeightScale()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); float result equal at its declared precision (the original returns ST0 unrounded); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100D09B2 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
-- **Calls directly:** `CYyModel_GetField44Addr`, `sub_10035250`
+- **Calls directly:** `CYyModel::GetField44Addr`, `fn_10035250`
 - **Reads constants** (.rdata): 3
 - **Indirect calls:** 4, of which 4 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): self, stack
@@ -910,19 +1019,27 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `double CXiSkeletonActor::GetDepthScale()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); float result equal at its declared precision (the original returns ST0 unrounded); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100D0A82 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
-- **Calls directly:** `CYyModel_GetField44Addr`, `sub_10035250`
+- **Calls directly:** `CYyModel::GetField44Addr`, `fn_10035250`
 - **Reads constants** (.rdata): 3
 - **Indirect calls:** 4, of which 4 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 - **DancingMad name:** `CXiSkeletonActor_GetDepthScale` (not stated)
 - **DancingMad note:** PS2 slot 36 -> PC slot 40.
 
+### `0x100D0D40` fn_100D0D40
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API undefined4 __thiscall fn_100D0D40(void * self_, int * param_1, int param_2)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x100D0D45 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `fn_10085010`, `sub_100CF750`
+- **Run by a frame** (frame_set.json): static, stack
+
 ### `0x100D12D0` CXiSkeletonActor::IsReadCompleteBody
 
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `bool CXiSkeletonActor::IsReadCompleteBody()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 91 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 91, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100D12D5 mov edi, ecx` (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
-- **Calls directly:** `List_GetTail`, `ResourceHandle_IsResident` ×3, `CXiActor_GetModelByteEE`, `CXiActor_GetModelPartWord`
+- **Calls directly:** `List_GetTail`, `ResourceHandle_IsResident` ×3, `CXiActor::GetModelByteEE`, `CXiActor::GetModelPartWord`
 - **Indirect calls:** 2, of which 2 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): self, stack
 - **DancingMad name:** `CXiSkeletonActor_IsReadCompleteBody` (not stated)
@@ -943,7 +1060,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char CXiSkeletonActor::LoadSkeletonSync(int arg0)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 98 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 98, town PASS 93, town2 PASS 96, combat PASS 98, zonetoinn PASS 92
 - **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x100D2F67 mov edi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `nullsub_12` ×9, `ResourceHandle_IsResident` ×14, `sub_100710F0` ×8, `sub_10072FD0`, `sub_100730E0` ×13, `sub_100731B0`, `ActorHandle_Constructor` ×14, `sub_100814F0` ×14, `sub_10083340`, `CXiActor_GetModelByteEE`, `CXiActor_GetModelByteEF` ×6, `CXiActor_GetModelPartWord` ×8, `sub_10084670`, `sub_10084690`, `CXiActor_GetModelByte1DB` ×2, `sub_100C51C0` ×7, `sub_100D0B50` ×5, `sub_100D0D40` ×3, `sub_100D0D70` ×3, `sub_100D1190`, `sub_100D43E0`, `sub_100FD3A0`, `Allocator_Generic` ×14
+- **Calls directly:** `fn_10017D30` ×9, `ResourceHandle_IsResident` ×14, `fn_100710F0` ×8, `sub_10072FD0`, `fn_100730E0` ×13, `sub_100731B0`, `ActorHandle_Constructor` ×14, `sub_100814F0` ×14, `fn_10083340`, `CXiActor::GetModelByteEE`, `CXiActor::GetModelByteEF` ×6, `CXiActor::GetModelPartWord` ×8, `fn_10084670`, `fn_10084690`, `CXiActor::GetModelByte1DB` ×2, `fn_100C51C0` ×7, `sub_100D0B50` ×5, `fn_100D0D40` ×3, `sub_100D0D70` ×3, `sub_100D1190`, `fn_100D43E0`, `fn_100FD3A0`, `Allocator_Generic` ×14
 - **Indirect calls:** 23, of which 20 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pMeshResourceMng`, `g_pXiZone`
 - **Run by a frame** (frame_set.json): static, stack
@@ -955,19 +1072,42 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char CXiSkeletonActor::LoadSkeletonResource(int a2)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x100D4332 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
-- **Calls directly:** `Mem_AllocFromArea`, `CMoTask_ResetFields`, `CXiSkeletonActor::LoadSkeletonSync` ×2, `CXiSkeletonActorRes::Constructor`
+- **Calls directly:** `Mem_AllocFromArea`, `CMoTask::ResetFields`, `CXiSkeletonActor::LoadSkeletonSync` ×2, `CXiSkeletonActorRes::Constructor`
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Writes globals:** `g_resourcesDirty`
 - **Run by a frame** (frame_set.json): static
 - **DancingMad name:** `CXiSkeletonActor_LoadSkeletonResource` (not stated)
 - **DancingMad note:** Decides synchronous vs. asynchronous skeleton load: if the actor is a special case (vtable slot 193 true, or its +0x70 sub-object has flag 0x80 or 0x100) loads synchronously; otherwise allocates a 72-byte task, constructs it via CXiSkeletonActorRes_Constructor with callback sub_100D2F40, and stores it at actor+0xA08.
 
+### `0x100D43E0` fn_100D43E0
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API int __cdecl fn_100D43E0(void)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); leaves EDX untouched (reg_keeps.json)
+- **Calls directly:** `fn_10087830`
+- **Run by a frame** (frame_set.json): static
+
+### `0x100D4410` fn_100D4410
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API int __thiscall fn_100D4410(void * self_, undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 16` (purges.json); entry ECX read: `0x100D4414 mov edi, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
+- **Calls directly:** `sub_1001B710`, `sub_1002C7E0`, `Mem_AllocDefault`
+- **Run by a frame** (frame_set.json): stack
+
+### `0x100D4540` fn_100D4540
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API int __thiscall fn_100D4540(void * self_, int param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x100D4540 mov eax, dword ptr [ecx + 0x7e4]` (ecx_use.json); entry EDX never read (edx_use.json); leaves EDX untouched (reg_keeps.json)
+- **Run by a frame** (frame_set.json): static
+
 ### `0x100D4560` CXiSkeletonActor::GetElem
 
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char CXiSkeletonActor::GetElem(unsigned int a2, int a3)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 95 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 95, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x100D456A mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `Actor_LookupByteField1C`, `Vec4_Set`, `Vec4_Copy`, `CXiSkeletonActor_GetElemThunk`, `CXiSkeletonActor_GetModelElem`, `CXiActor_ModelTest95790`, `CXiActor_ModelTest95680`, `CXiActor_ModelTest956A0`, `CXiActor_GetModelField170` ×3, `CXiActor_GetModelByteEF` ×3, `CXiActor_GetModelByte1DB`
+- **Calls directly:** `Actor_LookupByteField1C`, `Vec4_Set`, `Vec4_Copy`, `CXiSkeletonActor::GetElemThunk`, `CXiSkeletonActor::GetModelElem`, `CXiActor_ModelTest95790`, `CXiActor_ModelTest95680`, `CXiActor_ModelTest956A0`, `CXiActor::GetModelField170` ×3, `CXiActor::GetModelByteEF` ×3, `CXiActor::GetModelByte1DB`
 - **Reads constants** (.rdata): 1
 - **Indirect calls:** 7, of which 7 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): self, stack
@@ -979,7 +1119,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char CXiSkeletonActor::GetElemLocal(unsigned int a2, int a3)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x100D480A mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `Vec4_Set`, `Vec4_Copy`, `??ZConvexDecomposition@@YAAAVfloat3@0@AAV10@ABV10@@Z`, `CXiSkeletonActor_GetElemThunk`, `CXiSkeletonActor_GetModelElem` ×2, `CXiActor_ModelTest95790`, `CXiActor_ModelTest95680`, `CXiActor_ModelTest956A0`, `CXiActor_GetModelField170` ×3
+- **Calls directly:** `Vec4_Set`, `Vec4_Copy`, `fn_100270A0`, `CXiSkeletonActor::GetElemThunk`, `CXiSkeletonActor::GetModelElem` ×2, `CXiActor_ModelTest95790`, `CXiActor_ModelTest95680`, `CXiActor_ModelTest956A0`, `CXiActor::GetModelField170` ×3
 - **Reads constants** (.rdata): 1
 - **Indirect calls:** 7, of which 7 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): self, stack
@@ -996,6 +1136,13 @@
 - **DancingMad name:** `CXiSkeletonActor_GetEidMatrix` (medium)
 - **DancingMad note:** PS2 slot 62 -> PC 115 (EID_INDEX, matrix*); forwards to the model sub-object at +0x674. Medium confidence.
 
+### `0x100D5430` fn_100D5430
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API void __thiscall fn_100D5430(void * self_, undefined4 param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x100D5430 mov eax, dword ptr [ecx + 0x840]` (ecx_use.json); entry EDX never read (edx_use.json); leaves ECX untouched (reg_keeps.json)
+- **Run by a frame** (frame_set.json): static
+
 ### `0x100D5460` CXiSkeletonActor::IsDirectionLock_Set
 
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char CXiSkeletonActor::IsDirectionLock_Set(char a2)`
@@ -1005,12 +1152,20 @@
 - **DancingMad name:** `CXiSkeletonActor_IsDirectionLock_Set` (not stated)
 - **DancingMad note:** PS2 IsDirectionLock(char) -> PC 197. HIGH: same inc/dec counter shape as PS2 (+0x3D0 -> PC +0x838). Previously GetCheckedField838.
 
+### `0x100D6240` fn_100D6240
+
+- **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `XI_API uint32_t __thiscall fn_100D6240(void * self_, int * param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 46 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x100D6254 add ecx, 0x674` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `CYyModelBase::GetPartList`, `CYyModel::GetField44Addr`, `fn_1002C710`, `fn_1002C750`
+- **Run by a frame** (frame_set.json): static
+
 ### `0x100D62C0` CXiSkeletonActor::DrawResourceShadows
 
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `char * CXiSkeletonActor::DrawResourceShadows()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 46 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 46, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100D62C2 mov ebx, ecx` (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
-- **Calls directly:** `CYyModelBase_GetPartList`, `CYyModel_GetField44Addr`, `ResourceHandle_IsResident` ×2, `CXiActor_SpawnResourceGenerators` ×2
+- **Calls directly:** `CYyModelBase::GetPartList`, `CYyModel::GetField44Addr`, `ResourceHandle_IsResident` ×2, `CXiActor::SpawnResourceGenerators` ×2
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 - **DancingMad name:** `CXiSkeletonActor_DrawResourceShadows` (author-inferred)
@@ -1021,7 +1176,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActor.cpp`): `void CXiSkeletonActor::KillAllGenerater()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100D6371 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
-- **Calls directly:** `CMoGeneratorClone_Kill` ×2, `CMoResource_ReleaseChain` ×2, `CXiActor_KillGeneratorClones`
+- **Calls directly:** `CMoGeneratorClone_Kill` ×2, `CMoResource::ReleaseChain` ×2, `CXiActor_KillGeneratorClones`
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 - **DancingMad name:** `CXiSkeletonActor_KillAllGenerater` (not stated)
 - **DancingMad note:** PS2 slot 13 -> PC slot 18. Releases the two generator sub-objects. PS2's own spelling, kept as-is.

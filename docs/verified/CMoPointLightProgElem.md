@@ -9,6 +9,14 @@
 - **DancingMad name:** `CMoPointLightProgElem_GetRuntimeClass` (not stated)
 - **DancingMad note:** unique accessor
 
+### `0x100562F0` fn_100562F0
+
+- **Verified C++** (`tree/src/CMoPointLightProgElem.cpp`): `XI_API undefined8 __thiscall fn_100562F0(void * self_, uint32_t param_1, undefined4 param_2)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x100562F1 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `CMoElem::Constructor`
+- **Run by a frame** (frame_set.json): static
+
 ### `0x10056360` CMoPointLightProgElem::vf012
 
 - **Verified C++** (`tree/src/CMoPointLightProgElem.cpp`): `BOOL CMoPointLightProgElem::vf012(int a1)`

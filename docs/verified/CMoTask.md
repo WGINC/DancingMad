@@ -153,6 +153,16 @@
 - **Calls directly:** `SharedDeleteHelper`, `CMoTask_Destructor`
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 
+### `0x100748F0` CMoTask::ResetFields
+
+- **Verified C++** (`tree/src/CMoTask.cpp`): `undefined4 __thiscall CMoTask::ResetFields(void * self)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100748F2 mov dword ptr [ecx + 0xc], eax` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); returns EAX = 0 or 1 (ret_kinds.json); leaves ECX untouched (reg_keeps.json)
+- **Reads globals:** `g_resourcesDirty`
+- **Writes globals:** `g_resourcesDirty`
+- **Run by a frame** (frame_set.json): static
+- **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Zeroes the CMoTask fields at +4..+0x28 and copies the one-shot global flag byte_1047D13C into +0x20, then clears that global.
+
 ### `0x10081710` CMoTask::GetRuntimeClass_variant13
 
 - **Verified C++** (`tree/src/CMoTask.cpp`): `char ** __cdecl CMoTask::GetRuntimeClass_variant13()`

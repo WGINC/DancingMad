@@ -11,6 +11,13 @@
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 - **Summary** (inferred from reading the code, high confidence; docs/NAMES.md in ffximain-gfx): Assembles the vertex-shader source text held by this object, then creates a D3D8 vertex shader from the bytecode and the given declaration.
 
+### `0x101773F0` fn_101773F0
+
+- **Verified C++** (`tree/src/CTsZoneMap.cpp`): `XI_API undefined4 * __cdecl fn_101773F0(void)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); leaves ECX, EDX untouched (reg_keeps.json)
+- **Run by a frame** (frame_set.json): static
+
 ### `0x10177400` Gfx_SetZBias
 
 - **Verified C++** (`tree/src/CTsZoneMap.cpp`): `XI_API int __cdecl Gfx_SetZBias(unsigned int a1)`
@@ -19,6 +26,24 @@
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pCDx`
 - **Run by a frame** (frame_set.json): self
+
+### `0x10177420` ZoneMap_SetOverlayProjection
+
+- **Verified C++** (`tree/src/CTsZoneMap.cpp`): `XI_API void __thiscall ZoneMap_SetOverlayProjection(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 200 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10177429 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `D3DXMatrixPerspectiveFovLH_static`
+- **Reads constants** (.rdata): 2
+- **Indirect calls:** 2, of which 2 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Reads globals:** `g_pCDx`, `g_pCamera`
+- **Run by a frame** (frame_set.json): stack
+
+### `0x101779B0` fn_101779B0
+
+- **Verified C++** (`tree/src/CTsZoneMap.cpp`): `XI_API undefined4 __thiscall fn_101779B0(void * self_, undefined4 * param_1, int param_2)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** pops 8 through its tail jump to 0x10173AE0 (tail_purges.json); entry ECX read: `0x101779B0 add ecx, 0x34330` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Run by a frame** (frame_set.json): static
 
 ### `0x101779C0` Gfx_SetupLineDrawState
 
@@ -61,12 +86,28 @@
 - **Reads globals:** `g_pCDx`
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 
+### `0x10177D00` fn_10177D00
+
+- **Verified C++** (`tree/src/CTsZoneMap.cpp`): `XI_API void * __thiscall fn_10177D00(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 50 trials, 50 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10177D04 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `fn_10027990`, `fn_10054FC0`, `CMoTask_Constructor`, `fn_10167440`, `fn_10167800`, `fn_1016FC40`, `fn_101718E0`, `fn_10177FA0`, `fn_101784E0`
+- **Writes globals:** `0x10376EE8`, `g_zbiasRestore`, `0x10621C70`, `0x10621C74`, `0x10621C78`, `0x10621C7C`, `0x10621C80`, `g_zbiasOverlay`, `g_zbiasPresetAux`, `g_zbiasZoneMesh`, `g_zoneLoggingActive`, `g_zbiasPreset_C4D0`, `0x1065C4D4`, `0x1065C5D8`
+- **Run by a frame** (frame_set.json): static
+
+### `0x10177FA0` fn_10177FA0
+
+- **Verified C++** (`tree/src/CTsZoneMap.cpp`): `XI_API void __thiscall fn_10177FA0(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10177FA1 mov ebp, dword ptr [ecx + 0x394a4]` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); returns EAX = 0 or 1 (ret_kinds.json); leaves ECX untouched (reg_keeps.json)
+- **Run by a frame** (frame_set.json): static
+
 ### `0x10178070` CTsZoneMap::CTsZoneMap_Destructor
 
 - **Verified C++** (`tree/src/CTsZoneMap.cpp`): `char CTsZoneMap::CTsZoneMap_Destructor()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** pops 0 through its tail jump to 0x100747C0 (tail_purges.json); entry ECX read: `0x10178072 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `nullsub_1`, `Vt1032B6D8_Destructor`, `Vt10336614_Destructor`, `Vt10336634_Destructor`, `Vt10336668_Destructor`, `Vt1033668C_Destructor`, `ZoneMap_ReleaseStateBlock`, `ZoneMap_TeardownStep`
+- **Calls directly:** `fn_100279A0`, `Vt1032B6D8_Destructor`, `Vt10336614_Destructor`, `Vt10336634_Destructor`, `Vt10336668_Destructor`, `Vt1033668C_Destructor`, `ZoneMap_ReleaseStateBlock`, `ZoneMap_TeardownStep`
 - **Indirect calls:** 8, of which 8 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pCDx`
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
@@ -82,6 +123,13 @@
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 - **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Initialises the global z-bias presets (zone mesh, aux, overlay, restore) and uses a smaller set when a CDx capability flag is set.
 
+### `0x101784E0` fn_101784E0
+
+- **Verified C++** (`tree/src/CTsZoneMap.cpp`): `XI_API void __cdecl fn_101784E0(void)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); returns EAX = 0 or 1 (ret_kinds.json)
+- **Run by a frame** (frame_set.json): static
+
 ### `0x10178B00` ZoneMap_ReleaseStateBlock
 
 - **Verified C++** (`tree/src/CTsZoneMap.cpp`): `XI_API int __thiscall ZoneMap_ReleaseStateBlock(CTsZoneMap *self_)`
@@ -90,6 +138,14 @@
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pCDx`
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
+
+### `0x10179390` CTsZoneMap::UpdateViewerPosition
+
+- **Verified C++** (`tree/src/CTsZoneMap.cpp`): `void __thiscall CTsZoneMap::UpdateViewerPosition(void * self)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10179394 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `Camera_GetField50` ×2, `Vec3_Copy`, `fn_1016C150`
+- **Run by a frame** (frame_set.json): static, stack
 
 ### `0x10182700` CTsZoneMap::DrawProjectedTexture
 
@@ -109,7 +165,7 @@
 - **Verified C++** (`tree/src/CTsZoneMap.cpp`): `void CTsZoneMap::ModelActor_Draw(int a2, int a3)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 65 returned normally, 18903 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 65, town PASS 77, town2 PASS 76, combat PASS 77, zonetoinn PASS 76
 - **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x101844D1 mov ebx, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CDx::SetTransform`, `CDx::SetLight` ×5, `CDx::DrawPrimitive`, `Gfx_SetZBias`, `ZoneMap_FindLight`, `XiZone_GetDirLights`, `XiZone_GetDirLight`, `XiZone_GetAmbient`, `XiZone_GetFog`
+- **Calls directly:** `CDx::SetTransform`, `CDx::SetLight` ×5, `CDx::DrawPrimitive`, `Gfx_SetZBias`, `ZoneMap_FindLight`, `XiZone::GetDirLights`, `XiZone::GetDirLight`, `XiZone::GetAmbient`, `XiZone::GetFog`
 - **Indirect calls:** 56, of which 53 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pCDx`, `g_zbiasZoneMesh`, `g_pXiZone`, `C`
 - **Run by a frame** (frame_set.json): self, stack

@@ -5,7 +5,7 @@
 - **Verified C++** (`tree/src/CMoDistMorphElem.cpp`): `int CMoDistMorphElem::ApplyMorph(int a2, _DWORD *a3, int a4, int a5, _DWORD *C, char a7)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 61 returned normally, 180 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 61, town PASS 57, town2 PASS 57, combat PASS 57, zonetoinn PASS 57
 - **Convention facts:** `ret 24` (purges.json); entry ECX read: `0x1003F442 mov ebx, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
-- **Calls directly:** `CDx::SetTransform` ×2, `Mem_FreeObject`, `CMoDistMorphElem::ComputeMorphHandle`, `VertexBatch_BindAndDraw`, `DynVB_Reserve`, `DynVB_Lock`, `DynVB_Unlock`, `??0exception@@QAE@XZ_1`, `StateBlock_ApplyTSS`, `MoProcessor_CallVSlot49`, `TextureHolder_BindWarped`, `_atexit`
+- **Calls directly:** `CDx::SetTransform` ×2, `Mem_FreeObject`, `CMoDistMorphElem::ComputeMorphHandle`, `VertexBatch_BindAndDraw`, `DynVB_Reserve`, `DynVB_Lock`, `DynVB_Unlock`, `fn_1006AD90`, `StateBlock_ApplyTSS`, `MoProcessor_CallVSlot49`, `TextureHolder_BindWarped`, `_atexit`
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::SetRenderState` ×4, `IDirect3DDevice8::SetTextureStageState` ×2
 - **Indirect calls:** 6, of which 6 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `CMoDistMorphElem_ApplyMorph_staticGuards`, `g_pDynVB_FVF152`, `g_pResourceMng`, `g_pProcessor`
@@ -30,7 +30,7 @@
 - **Verified C++** (`tree/src/CMoDistMorphElem.cpp`): `char __stdcall CMoDistMorphElem::ValidateMorphData(int a1, int a2, int a3, int a4)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 39 returned normally, 156 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 39, town PASS 46, town2 PASS 54, combat PASS 50, zonetoinn PASS 55
 - **Convention facts:** `ret 16` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CDx::GetRenderTargetTop` ×10, `VertexBatch_BindAndDraw`, `DynVB_Reserve`, `DynVB_Lock`, `DynVB_Unlock`, `sub_1006A060`, `sub_1006A0E0`, `??0exception@@QAE@XZ_1`, `StateBlock_ApplyRSTSS`, `_atexit`
+- **Calls directly:** `CDx::GetRenderTargetTop` ×10, `VertexBatch_BindAndDraw`, `DynVB_Reserve`, `DynVB_Lock`, `DynVB_Unlock`, `sub_1006A060`, `sub_1006A0E0`, `fn_1006AD90`, `StateBlock_ApplyRSTSS`, `_atexit`
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::SetRenderState` ×2, `IDirect3DDevice8::SetTexture` ×2
 - **Reads constants** (.rdata): 3
 - **Indirect calls:** 5, of which 5 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
@@ -54,12 +54,20 @@
 - **Verified C++** (`tree/src/CMoDistMorphElem.cpp`): `char CMoDistMorphElem::UpdateMorphBlend()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 53 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 98, town2 PASS 98, combat PASS 98, zonetoinn PASS 98
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10043594 mov ebp, ecx` (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
-- **Calls directly:** `CMoDistMorphElem::ApplyMorph`, `CMoDistMorphElem::ComputeMorphHandle`, `CMoDistMorphElem::ValidateMorphData`, `RegisterWithProcessor`, `CMoDX_SetWorldMatrix`, `CMoDX_GetWorldMatrix`, `MoProcessor_CallVSlot49`
+- **Calls directly:** `CMoDistMorphElem::ApplyMorph`, `CMoDistMorphElem::ComputeMorphHandle`, `CMoDistMorphElem::ValidateMorphData`, `RegisterWithProcessor`, `CMoDX::SetWorldMatrix`, `CMoDX_GetWorldMatrix`, `MoProcessor_CallVSlot49`
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pResourceMng`, `g_pProcessor`
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 - **DancingMad name:** `CMoDistMorphElem_UpdateMorphBlend` (not stated)
 - **DancingMad note:** Full lookup/validate/apply/double-buffer cycle for a morph target.
+
+### `0x10052E20` fn_10052E20
+
+- **Verified C++** (`tree/src/CMoDistMorphElem.cpp`): `XI_API undefined8 __thiscall fn_10052E20(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10052E21 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `CXi471011C8_VT_1032AC90::Ctor`
+- **Run by a frame** (frame_set.json): static
 
 ### `0x10052E40` CMoDistMorphElem::vf012
 

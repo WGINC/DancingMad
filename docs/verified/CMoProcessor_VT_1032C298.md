@@ -14,6 +14,13 @@
 - **Convention facts:** `ret 8` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); leaves EDX untouched (reg_keeps.json)
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
 
+### `0x1006F800` fn_1006F800
+
+- **Verified C++** (`tree/src/CMoProcessor_VT_1032C298.cpp`): `XI_API float * __stdcall fn_1006F800(float * param_1, float * param_2, float * param_3)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): NOT VERIFIED -- FAIL
+- **Convention facts:** `ret 12` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json)
+- **Run by a frame** (frame_set.json): self
+
 ### `0x1006FA30` CMoProcessor_VT_1032C298::vf021
 
 - **Verified C++** (`tree/src/CMoProcessor_VT_1032C298.cpp`): `float * CMoProcessor_VT_1032C298::vf021(float *a1, float *a2, float *a3, float a4)`

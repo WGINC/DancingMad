@@ -30,3 +30,11 @@
 - **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x1003EFA1 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
 - **Calls directly:** `SharedDeleteHelper`, `CMoVuAnmElem_Destructor`
 - **Run by a frame** (frame_set.json): not shown (static reach from the main loop and the sampler did not find it)
+
+### `0x10052CD0` fn_10052CD0
+
+- **Verified C++** (`tree/src/CMoVuAnmElem.cpp`): `XI_API undefined8 __thiscall fn_10052CD0(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10052CD2 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `DynVB_Constructor`, `CMoElem::Constructor`
+- **Run by a frame** (frame_set.json): static

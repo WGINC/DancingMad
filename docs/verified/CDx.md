@@ -84,7 +84,7 @@
 - **Verified C++** (`tree/src/CDx.cpp`): `int __cdecl CDx::Present()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 124 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
-- **Calls directly:** `nullsub_13`
+- **Calls directly:** `fn_10017D20`
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pD3DHolder`
 - **Run by a frame** (frame_set.json): static, stack
@@ -113,6 +113,15 @@
 - **DancingMad name:** `CDx_EndScene` (not stated)
 - **DancingMad note:** thiscall shim: device->EndScene.
 
+### `0x10009750` fn_10009750
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API void __stdcall fn_10009750(HCURSOR param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 4` (purges.json); entry EDX not established (edx_use.json)
+- **Calls imports:** `SetCursor`
+- **Reads globals:** `g_cfgHardwareMouse`
+- **Run by a frame** (frame_set.json): static
+
 ### `0x100097F0` CDx::SetCursorShape
 
 - **Verified C++** (`tree/src/CDx.cpp`): `HCURSOR CDx::SetCursorShape(int a2, int a3)`
@@ -124,18 +133,42 @@
 - **Run by a frame** (frame_set.json): static, self, stack
 - **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): When the hardware cursor is enabled, maps a cursor state (0-6) to one of the cached HCURSOR slots at CDx+0xA04, loading IDC_ARROW on first use, and calls SetCursor.
 
+### `0x10009870` fn_10009870
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API undefined4 __thiscall fn_10009870(void * self_, undefined4 param_1, int * param_2)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 96 returned normally, 24 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x10009871 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); returns EAX = 0 or 1 (ret_kinds.json)
+- **Indirect calls:** 2, of which 2 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Run by a frame** (frame_set.json): static, self
+
+### `0x100098E0` fn_100098E0
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API void __thiscall fn_100098E0(void * self_, undefined4 param_1, int * param_2, undefined4 param_3)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 96 returned normally, 69 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 12` (purges.json); entry ECX read: `0x100098EC mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
+- **Indirect calls:** 2, of which 2 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Run by a frame** (frame_set.json): static, self, stack
+
 ### `0x10009920` CDx::SetDefaultRenderState
 
 - **Verified C++** (`tree/src/CDx.cpp`): `int CDx::SetDefaultRenderState()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 2384 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10009922 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
-- **Calls directly:** `sub_10009870` ×2, `sub_100098E0` ×2
+- **Calls directly:** `fn_10009870` ×2, `fn_100098E0` ×2
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::SetRenderState` ×48, `IDirect3DDevice8::SetTextureStageState`
 - **Indirect calls:** 49, of which 49 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pCDx`
 - **Run by a frame** (frame_set.json): static, self, stack
 - **DancingMad name:** `CDx_SetDefaultRenderState` (not stated)
 - **DancingMad note:** 345 instructions of SetRenderState/SetTextureStageState defaults; called at frame start.
+
+### `0x10009D20` fn_10009D20
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API undefined4 __thiscall fn_10009D20(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 100 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10009D24 mov al, byte ptr [ecx + 0x158]` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Run by a frame** (frame_set.json): static
 
 ### `0x10009DC0` CDx::SetViewport
 
@@ -164,17 +197,85 @@
 - **Calls directly:** `CDx_PushRenderTargetTexture`
 - **Run by a frame** (frame_set.json): static, stack
 
+### `0x10009EA0` fn_10009EA0
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API void __thiscall fn_10009EA0(void * self_, int * param_1, undefined4 xi_s2, undefined4 xi_s3)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 12` (purges.json); entry ECX read: `through a callee` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `CDx_PushRenderTargetTexture`
+- **Run by a frame** (frame_set.json): static, stack
+
+### `0x10009EE0` fn_10009EE0
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API void __thiscall fn_10009EE0(void * self_, int * param_1, undefined4 xi_s2, undefined4 xi_s3)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 12` (purges.json); entry ECX read: `through a callee` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `CDx_PushRenderTargetTexture`
+- **Run by a frame** (frame_set.json): static, self, stack
+
+### `0x1000A070` fn_1000A070
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API void __thiscall fn_1000A070(void * self_, undefined4 param_1, undefined4 param_2, undefined4 param_3)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 12` (purges.json); entry ECX read: `through a callee` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `sub_1000A0A0`
+- **Run by a frame** (frame_set.json): static
+
 ### `0x1000A1D0` CDx::SetTexture
 
 - **Verified C++** (`tree/src/CDx.cpp`): `int CDx::SetTexture(int a2, int a3)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 100 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x1000A1D1 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
-- **Calls directly:** `CDx_PopRenderTarget`
+- **Calls directly:** `CDx::PopRenderTarget`
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::SetTexture`
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): static, stack
 - **DancingMad name:** `CDx_SetTexture` (not stated)
 - **DancingMad note:** device->SetTexture. 19 callers.
+
+### `0x1000A200` fn_1000A200
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API void __thiscall fn_1000A200(void * self_, undefined4 xi_s1, undefined4 xi_s2)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 100 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x1000A201 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
+- **Calls directly:** `CDx::PopRenderTarget`
+- **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Run by a frame** (frame_set.json): static, stack
+
+### `0x1000A230` fn_1000A230
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API void __thiscall fn_1000A230(void * self_, undefined4 xi_s1, undefined4 xi_s2)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 100 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x1000A231 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
+- **Calls directly:** `CDx::PopRenderTarget`
+- **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Run by a frame** (frame_set.json): static, stack
+
+### `0x1000A290` CDx::PopRenderTargetDefault
+
+- **Verified C++** (`tree/src/CDx.cpp`): `void __thiscall CDx::PopRenderTargetDefault(void * self, undefined4 xi_s1, undefined4 xi_s2)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 8` (purges.json); entry ECX read: `through a callee` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `CDx::PopRenderTarget`
+- **Run by a frame** (frame_set.json): static, stack
+- **Summary** (inferred from reading the code, high confidence; docs/NAMES.md in ffximain-gfx): Calls CDx_PopRenderTarget (0x1000A2B0) with the extra two arguments set to 1.
+
+### `0x1000A2B0` CDx::PopRenderTarget
+
+- **Verified C++** (`tree/src/CDx.cpp`): `undefined4 __thiscall CDx::PopRenderTarget(void * self, undefined4 xi_s1, undefined4 xi_s2, undefined4 xi_s3, undefined4 xi_s4)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 34 returned normally, 65 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 16` (purges.json); entry ECX read: `0x1000A2B2 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Indirect calls:** 6, of which 3 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Run by a frame** (frame_set.json): static, self, stack
+- **Summary** (inferred from reading the code, high confidence; docs/NAMES.md in ffximain-gfx): Pops the CDx render-target stack: decrements the depth byte, rebinds the previous colour target (texture surface level 0 or surface) and depth surface, or the defaults at depth 0, then restores the saved viewport.
+
+### `0x1000A390` fn_1000A390
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API void __thiscall fn_1000A390(void * self_, uint32_t param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 16` (purges.json); entry ECX read: `through a callee` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `CDx::EndClearBegin`
+- **Run by a frame** (frame_set.json): static, self, stack
 
 ### `0x1000A3B0` CDx::DrawScreenQuadAtDepth
 
@@ -187,6 +288,23 @@
 - **Run by a frame** (frame_set.json): static
 - **DancingMad name:** `CDx_DrawScreenQuadAtDepth` (not stated)
 - **DancingMad note:** Screen quad (FVF XYZRHW|DIFFUSE|TEX1) covering the current target at a given z.
+
+### `0x1000A4F0` CDx::DrawTextureToViewport
+
+- **Verified C++** (`tree/src/CDx.cpp`): `void __thiscall CDx::DrawTextureToViewport(void * self, undefined4 param_1, undefined4 param_2, undefined4 xi_s3)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 12` (purges.json); entry ECX read: `0x1000A4F7 mov al, byte ptr [ecx + 0x158]` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `fn_1000A550`
+- **Run by a frame** (frame_set.json): static
+- **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Draws a texture (for example the scene render target) as a screen quad covering the current viewport, with full UVs and the given diffuse colour.
+
+### `0x1000A550` fn_1000A550
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API void __thiscall fn_1000A550(void * self_, undefined4 param_1, undefined4 xi_s2, undefined4 xi_s3, undefined4 xi_s4)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 16` (purges.json); entry ECX read: `through a callee` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `CDx::DrawTexturedScreenQuad`
+- **Run by a frame** (frame_set.json): static
 
 ### `0x1000A5A0` CDx::DrawTexturedScreenQuad
 
@@ -244,12 +362,35 @@
 - **DancingMad name:** `Post_DepthBlurComposite` (not stated)
 - **DancingMad note:** Draws the 256x256 downsampled scene copy back as a screen quad at a projected depth with Z-test on / Z-write off (distance blur). Only reachable when g_depthBlurEnabled_Dead != 0, which never happens in the shipping client.
 
+### `0x1000AE40` CDx::StepFadeCounter
+
+- **Verified C++** (`tree/src/CDx.cpp`): `uint32_t __thiscall CDx::StepFadeCounter(void * self, float param_1, float param_2, int param_3)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 12` (purges.json); entry ECX read: `0x1000AE90 mov dword ptr [ecx + 0x174], 0x43000000` (ecx_use.json); entry EDX never read (edx_use.json); leaves ECX untouched (reg_keeps.json)
+- **Reads constants** (.rdata): 2
+- **Run by a frame** (frame_set.json): static
+- **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Fade counter at CDx+0x174: mode 0 resets it to 128.0; mode 1 subtracts a2*a3 (minimum 0.01) and returns 1 once it reaches 0.
+
+### `0x1000BB10` fn_1000BB10
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API void __cdecl fn_1000BB10(void)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); leaves EAX, ECX, EDX untouched (reg_keeps.json)
+- **Run by a frame** (frame_set.json): static, self
+
+### `0x1000BB20` fn_1000BB20
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API void __cdecl fn_1000BB20(void)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); leaves EAX, ECX, EDX untouched (reg_keeps.json)
+- **Run by a frame** (frame_set.json): static
+
 ### `0x1000BB90` CDx::DrawStereoOddFrameOverlay
 
 - **Verified C++** (`tree/src/CDx.cpp`): `char CDx::DrawStereoOddFrameOverlay(int a1)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 384 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x1000BB98 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CDx::DrawPrimitiveUP`, `CEnv_IsStereoMode`
+- **Calls directly:** `CDx::DrawPrimitiveUP`, `CEnv::IsStereoMode`
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::SetRenderState` ×4, `IDirect3DDevice8::SetTexture`, `IDirect3DDevice8::SetVertexShader`
 - **Indirect calls:** 6, of which 6 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `CDx_DrawStereoOddFrameOverlay_staticGuard`, `g_pEnv`
@@ -277,6 +418,26 @@
 - **DancingMad name:** `CDx_GetTransformCached` (not stated)
 - **DancingMad note:** Copies WORLD/VIEW/PROJECTION back out of CDx cache.
 
+### `0x1000BE10` fn_1000BE10
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API void __thiscall fn_1000BE10(void * self_, int param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 83 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x1000BE16 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
+- **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Run by a frame** (frame_set.json): self
+
+### `0x1000BE50` Light_ApplyTimeOfDayTint
+
+- **Verified C++** (`tree/src/CDx.cpp`): `XI_API undefined4 __thiscall Light_ApplyTimeOfDayTint(void * self_, int param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x1000BE6F add ecx, 0x1f4` (ecx_use.json); entry EDX never read (edx_use.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
+- **Calls directly:** `GammaRamp_GetChannelSamples`
+- **Reads constants** (.rdata): 2
+- **Reads globals:** `g_windowMode`
+- **Run by a frame** (frame_set.json): self, stack
+- **DancingMad name:** `Light_ApplyTimeOfDayTint` (confirmed)
+- **DancingMad note:** A genuine, confirmed environmental-lighting system: gated behind g_timeOfDayTintEnabled, skips already-bright lights (any RGB channel >= 0.8), otherwise scales a light's diffuse color by a fetched time-of-day/zone ambient factor before the light is set on the device. The real mechanism behind lights dimming/tinting by time of day or zone.
+
 ### `0x1000BF30` CDx::SetLight
 
 - **Verified C++** (`tree/src/CDx.cpp`): `int CDx::SetLight(int a2, float *a3)`
@@ -295,7 +456,7 @@
 - **Verified C++** (`tree/src/CDx.cpp`): `int CDx::CompositeSceneToBackBuffer(int a1, int a2, int a3, int a4)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 3394 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 16` (purges.json); entry ECX read: `0x1000C0B7 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json)
-- **Calls directly:** `CDx::PushRenderTarget`, `CDx::SetTexture`, `CDx::DrawTexturedScreenQuad` ×2, `CDx::DrawPrimitiveUP` ×2, `CEnv_IsStereoMode`
+- **Calls directly:** `CDx::PushRenderTarget`, `CDx::SetTexture`, `CDx::DrawTexturedScreenQuad` ×2, `CDx::DrawPrimitiveUP` ×2, `CEnv::IsStereoMode`
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::SetRenderState` ×16, `IDirect3DDevice8::SetTextureStageState` ×36, `IDirect3DDevice8::SetVertexShader`
 - **Reads constants** (.rdata): 1
 - **Indirect calls:** 56, of which 56 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
@@ -309,7 +470,7 @@
 - **Verified C++** (`tree/src/CDx.cpp`): `int CDx::CreateStereoResources(unsigned __int16 a1, unsigned __int16 a2)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x1000C6EA mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CDx::CreateTexture`, `CDx::ReleaseStereoResources`, `CDx::CreateRampTexture1x16`, `CDx::CreateRampTextures1024x2` ×2, `nullsub_38`
+- **Calls directly:** `CDx::CreateTexture`, `CDx::ReleaseStereoResources`, `CDx::CreateRampTexture1x16`, `CDx::CreateRampTextures1024x2` ×2, `fn_1000D620`
 - **Reads globals:** `g_pEnv`
 - **Run by a frame** (frame_set.json): static
 - **DancingMad name:** `CDx_CreateStereoResources` (not stated)
@@ -354,7 +515,7 @@
 - **Verified C++** (`tree/src/CDx.cpp`): `char CDx::GetStereoSecondEyeTarget(int a1, int a2)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 44 returned normally, 56 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 44, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 8` (purges.json); entry ECX read: `0x1000CA05 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CEnv_IsStereoMode`
+- **Calls directly:** `CEnv::IsStereoMode`
 - **Indirect calls:** 8, of which 2 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pCDx`, `g_pEnv`, `pTexture`, `g_translucentTargetEye2`
 - **Run by a frame** (frame_set.json): static, self, stack
@@ -366,7 +527,7 @@
 - **Verified C++** (`tree/src/CDx.cpp`): `int CDx::DrawPrimitive(int a1, int a2, int a3)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 168 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 12` (purges.json); entry ECX read: `0x1000CB28 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CDx::PushRenderTarget`, `CDx_PopRenderTargetDefault`, `CDx::GetStereoSecondEyeTarget`, `CDx::ApplyStereoEyeProjection` ×2, `CDx::RestoreProjection` ×2
+- **Calls directly:** `CDx::PushRenderTarget`, `CDx::PopRenderTargetDefault`, `CDx::GetStereoSecondEyeTarget`, `CDx::ApplyStereoEyeProjection` ×2, `CDx::RestoreProjection` ×2
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::DrawPrimitive` ×3
 - **Indirect calls:** 3, of which 3 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): static, self, stack
@@ -378,7 +539,7 @@
 - **Verified C++** (`tree/src/CDx.cpp`): `int CDx::DrawIndexedPrimitive(int a1, int a2, int a3, int a4, int a5)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 169 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 20` (purges.json); entry ECX read: `0x1000CC08 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CDx::PushRenderTarget`, `CDx_PopRenderTargetDefault`, `CDx::GetStereoSecondEyeTarget`, `CDx::ApplyStereoEyeProjection` ×2, `CDx::RestoreProjection` ×2
+- **Calls directly:** `CDx::PushRenderTarget`, `CDx::PopRenderTargetDefault`, `CDx::GetStereoSecondEyeTarget`, `CDx::ApplyStereoEyeProjection` ×2, `CDx::RestoreProjection` ×2
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::DrawIndexedPrimitive` ×3
 - **Indirect calls:** 3, of which 3 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): self, stack
@@ -390,7 +551,7 @@
 - **Verified C++** (`tree/src/CDx.cpp`): `int CDx::DrawPrimitiveUP(int a1, int a2, int a3, int a4)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 168 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 16` (purges.json); entry ECX read: `0x1000CD08 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CDx::PushRenderTarget`, `CDx_PopRenderTargetDefault`, `CDx::GetStereoSecondEyeTarget`, `CDx::ApplyStereoEyeProjection` ×2, `CDx::RestoreProjection` ×2
+- **Calls directly:** `CDx::PushRenderTarget`, `CDx::PopRenderTargetDefault`, `CDx::GetStereoSecondEyeTarget`, `CDx::ApplyStereoEyeProjection` ×2, `CDx::RestoreProjection` ×2
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::DrawPrimitiveUP` ×3
 - **Indirect calls:** 3, of which 3 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Run by a frame** (frame_set.json): static, self, stack
@@ -402,7 +563,7 @@
 - **Verified C++** (`tree/src/CDx.cpp`): `void CDx::ApplyStereoEyeProjection()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 100 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x1000CF24 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
-- **Calls directly:** `??0Iostream_init@@QAE@XZ_0`, `nullsub_1`, `Mat4_SetIdentity`, `Mat4_PreMultiply`
+- **Calls directly:** `fn_10027990`, `fn_100279A0`, `Mat4_SetIdentity`, `Mat4_PreMultiply`
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::SetTransform`
 - **Indirect calls:** 1, of which 1 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_stereoEyeOffset`

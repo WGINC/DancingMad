@@ -53,7 +53,7 @@
 - **Verified C++** (`tree/src/CXiSkeletonActorRes.cpp`): `char CXiSkeletonActorRes::ProcessLoadState()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 23 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100D70A2 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
-- **Calls directly:** `CXiActor_GetModelByteEE`, `CXiSkeletonActorRes::CXiSkeletonActorRes_GetLinkedActor`
+- **Calls directly:** `CXiActor::GetModelByteEE`, `CXiSkeletonActorRes::CXiSkeletonActorRes_GetLinkedActor`
 - **Indirect calls:** 5, of which 5 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pActiveSkeletonActorRes`
 - **Writes globals:** `g_pActiveSkeletonActorRes`

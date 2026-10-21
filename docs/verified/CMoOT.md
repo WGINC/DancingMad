@@ -9,6 +9,14 @@
 - **DancingMad name:** `CMoOT_GetRuntimeClass` (not stated)
 - **DancingMad note:** unique accessor
 
+### `0x100552A0` fn_100552A0
+
+- **Verified C++** (`tree/src/CMoOT.cpp`): `XI_API void * __thiscall fn_100552A0(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100552A1 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); leaves ECX, EDX untouched (reg_keeps.json)
+- **Calls directly:** `fn_100552F0`
+- **Run by a frame** (frame_set.json): static
+
 ### `0x100552C0` CMoOT::ScalarDeletingDtor
 
 - **Verified C++** (`tree/src/CMoOT.cpp`): `int * CMoOT::ScalarDeletingDtor(char a2)`

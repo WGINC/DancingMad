@@ -12,6 +12,13 @@
 - **Run by a frame** (frame_set.json): static
 - **Summary** (inferred from reading the code, high confidence; docs/NAMES.md in ffximain-gfx): Finds or creates a texture slot (w, h, depth) in the sqgxTexture table and returns its index (maximum 512). With image data it uploads it; without data it creates a render-target texture.
 
+### `0x102819C0` fn_102819C0
+
+- **Verified C++** (`tree/src/sqgxTexture.cpp`): `XI_API void __cdecl fn_102819C0(int param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 1 argument slot(s) (cdecl_args.json); leaves ECX, EDX untouched (reg_keeps.json)
+- **Run by a frame** (frame_set.json): static
+
 ### `0x102819D0` sqgxTextureClutAdd
 
 - **Verified C++** (`tree/src/sqgxTexture.cpp`): `XI_API int __cdecl sqgxTextureClutAdd(int a1, int a2, int a3)`
@@ -21,6 +28,50 @@
 - **Reads globals:** `g_pDancerDevice`
 - **Run by a frame** (frame_set.json): static
 - **Summary** (inferred from reading the code, medium confidence; docs/NAMES.md in ffximain-gfx): Allocates a free palette slot (1-255) and loads 256 entries from RGB or RGBA source data (stride a2) into the device palette, returning the slot.
+
+### `0x10281A70` fn_10281A70
+
+- **Verified C++** (`tree/src/sqgxTexture.cpp`): `XI_API void __cdecl fn_10281A70(int param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 96 returned normally, 87 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry EDX not established (edx_use.json); reads 1 argument slot(s) (cdecl_args.json)
+- **Indirect calls:** 2, of which 2 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Reads globals:** `g_counter_109A261C`
+- **Writes globals:** `g_counter_109A261C`
+- **Run by a frame** (frame_set.json): static
+
+### `0x10281B60` sqgxTextureGetSize
+
+- **Verified C++** (`tree/src/sqgxTexture.cpp`): `XI_API void __cdecl sqgxTextureGetSize(int param_1, undefined4 * param_2, undefined4 * param_3)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 3 argument slot(s) (cdecl_args.json)
+- **Run by a frame** (frame_set.json): static
+
+### `0x10281C20` sqgxTextureSet
+
+- **Verified C++** (`tree/src/sqgxTexture.cpp`): `XI_API void __cdecl sqgxTextureSet(int param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 1 argument slot(s) (cdecl_args.json)
+- **Reads globals:** `g_pSqgxContext`
+- **Writes globals:** `g_sqgxRenderStateDirty`
+- **Run by a frame** (frame_set.json): static
+
+### `0x10281C50` sqgxTextureDecal
+
+- **Verified C++** (`tree/src/sqgxTexture.cpp`): `XI_API void __cdecl sqgxTextureDecal(undefined4 param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 1 argument slot(s) (cdecl_args.json)
+- **Reads globals:** `g_pSqgxContext`
+- **Writes globals:** `g_sqgxRenderStateDirty`
+- **Run by a frame** (frame_set.json): static
+
+### `0x10281C80` sqgxTextureClamp
+
+- **Verified C++** (`tree/src/sqgxTexture.cpp`): `XI_API void __cdecl sqgxTextureClamp(undefined4 param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 1 argument slot(s) (cdecl_args.json)
+- **Reads globals:** `g_pSqgxContext`
+- **Writes globals:** `g_sqgxRenderStateDirty`
+- **Run by a frame** (frame_set.json): static
 
 ### `0x10281D60` sqgxTextureClut
 

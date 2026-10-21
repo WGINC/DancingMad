@@ -27,7 +27,7 @@
 - **Verified C++** (`tree/src/sqgxShape.cpp`): `XI_API int * __cdecl sqgxShapeBegin(void)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 89 returned normally, 155 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 89, town PASS 89, town2 PASS 89, combat PASS 89, zonetoinn PASS 89
 - **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `sqgxTextureUpdate`, `nullsub_31`, `sqgxColorUpdate`, `sqgxMatrixUpdate`, `j_sqgxVertexShaderSelect`, `sub_1028A770` ×5, `sub_1028A790` ×4, `sub_1028BB10` ×4, `sub_1028BB70` ×4, `sub_10297320`, `sub_1029BD50`, `sub_1029BF50`, `sub_1029C480`, `sub_1029C610`, `sub_1029C950` ×2, `sub_10311C2C` ×4
+- **Calls directly:** `sqgxTextureUpdate`, `fn_10283240`, `sqgxColorUpdate`, `sqgxMatrixUpdate`, `j_sqgxVertexShaderSelect`, `sub_1028A770` ×5, `sub_1028A790` ×4, `sub_1028BB10` ×4, `sub_1028BB70` ×4, `sub_10297320`, `sub_1029BD50`, `sub_1029BF50`, `sub_1029C480`, `sub_1029C610`, `sub_1029C950` ×2, `sub_10311C2C` ×4
 - **Reads constants** (.rdata): 1
 - **Indirect calls:** 35, of which 12 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `g_pDancerDevice`, `g_pSqgxContext`

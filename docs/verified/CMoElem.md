@@ -118,6 +118,17 @@
 - **DancingMad name:** `CMoElem_GetRuntimeClass_variant8` (not stated)
 - **DancingMad note:** SHARED accessor (x14) -- do not assume this specific stub identifies a specific subclass instance
 
+### `0x10044890` CMoElem::Constructor
+
+- **Verified C++** (`tree/src/CMoElem.cpp`): `undefined8 __thiscall CMoElem::Constructor(void * self)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10044891 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `fn_10055570`, `OcclusionQuery_Init`
+- **Reads globals:** `g_countdown_1047BC6C`
+- **Writes globals:** `g_countdown_1047BC6C`
+- **Run by a frame** (frame_set.json): static, self, stack
+- **Summary** (inferred from reading the code, high confidence; docs/NAMES.md in ffximain-gfx): Base constructor of CMoElem: calls parent ctor, inits occlusion query member, stores CMoElem vtable and zeroes/initializes fields.
+
 ### `0x10044950` CMoElem::ScalarDeletingDtor
 
 - **Verified C++** (`tree/src/CMoElem.cpp`): `int * CMoElem::ScalarDeletingDtor(char a2)`
@@ -131,12 +142,63 @@
 - **Verified C++** (`tree/src/CMoElem.cpp`): `char CMoElem::CMoElemFamily_SharedCleanup()`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 100, town2 PASS 100, combat PASS 100, zonetoinn PASS 100
 - **Convention facts:** pops 0 through its tail jump to 0x100747C0 (tail_purges.json); entry ECX read: `0x10044973 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CMoGeneratorClone_UnlinkElemListA`, `CMoGeneratorClone_UnlinkElemListB`, `LinkNode_Unlink`, `Mem_FreeWithHeader12`, `OcclusionQuery_Release`, `CMoResource_ReleaseChain` ×2, `MoRes_FreeIfUnreferenced` ×2, `NodePool_ReleaseNode` ×2
+- **Calls directly:** `CMoGeneratorClone::UnlinkElemListA`, `CMoGeneratorClone_UnlinkElemListB`, `LinkNode_Unlink`, `Mem_FreeWithHeader12`, `OcclusionQuery_Release`, `CMoResource::ReleaseChain` ×2, `MoRes_FreeIfUnreferenced` ×2, `NodePool_ReleaseNode` ×2
 - **Reads globals:** `g_countdown_1047BC6C`, `g_pMeshResourceMng`
 - **Writes globals:** `g_countdown_1047BC6C`
 - **Run by a frame** (frame_set.json): stack
 - **DancingMad name:** `CMoElemFamily_SharedCleanup` (not stated)
 - **DancingMad note:** The common destructor-body cleanup call shared by most CMoElem-family siblings' destructors (CMoDisintegrateProgElem, CMoVuLineProgElem, and many more).
+
+### `0x10044AA0` fn_10044AA0
+
+- **Verified C++** (`tree/src/CMoElem.cpp`): `XI_API void __thiscall fn_10044AA0(void * self_, int param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x10044AA0 mov eax, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `CMoResource_AddRefChain`
+- **Run by a frame** (frame_set.json): static, self
+
+### `0x10044AC0` fn_10044AC0
+
+- **Verified C++** (`tree/src/CMoElem.cpp`): `XI_API unsigned char __thiscall fn_10044AC0(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10044AC0 mov eax, dword ptr [ecx + 0xfc]` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Run by a frame** (frame_set.json): self
+
+### `0x10044AE0` fn_10044AE0
+
+- **Verified C++** (`tree/src/CMoElem.cpp`): `XI_API undefined4 __thiscall fn_10044AE0(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 95 returned normally, 74 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10044AE2 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
+- **Calls directly:** `fn_100473F0`, `sub_1004A980`, `fn_1004E720`, `sub_10053DD0`
+- **Reads constants** (.rdata): 2
+- **Indirect calls:** 3, of which 3 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
+- **Reads globals:** `g_pResourceMng`
+- **Run by a frame** (frame_set.json): self, stack
+
+### `0x10044C20` fn_10044C20
+
+- **Verified C++** (`tree/src/CMoElem.cpp`): `XI_API void __thiscall fn_10044C20(void * self_, int param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x10044C20 mov eax, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `CMoResource_AddRefChain`
+- **Run by a frame** (frame_set.json): static
+
+### `0x10045800` fn_10045800
+
+- **Verified C++** (`tree/src/CMoElem.cpp`): `XI_API void __cdecl fn_10045800(float * param_1)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX never read (ecx_use.json); entry EDX never read (edx_use.json); reads 1 argument slot(s) (cdecl_args.json)
+- **Reads constants** (.rdata): 2
+- **Run by a frame** (frame_set.json): self
+
+### `0x100458F0` fn_100458F0
+
+- **Verified C++** (`tree/src/CMoElem.cpp`): `XI_API undefined4 __thiscall fn_100458F0(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x100458F0 fld dword ptr [ecx + 0x138]` (ecx_use.json); entry EDX never read (edx_use.json)
+- **Calls directly:** `sub_100555B0`
+- **Reads constants** (.rdata): 1
+- **Run by a frame** (frame_set.json): self, stack
 
 ### `0x10045920` fn_10045920
 
@@ -149,12 +211,21 @@
 - **Writes globals:** `Fn10045920_staticGuards`, `Fn10045920_static_BC10`, `Fn10045920_static_BC14`, `Fn10045920_static_BC18`
 - **Run by a frame** (frame_set.json): stack
 
+### `0x10045A40` fn_10045A40
+
+- **Verified C++** (`tree/src/CMoElem.cpp`): `XI_API undefined4 __thiscall fn_10045A40(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10045A45 mov esi, ecx` (ecx_use.json); entry EDX not established (edx_use.json); reads 0 argument slot(s) (cdecl_args.json); returns AL = 0 or 1, the rest left over (ret_kinds.json)
+- **Calls directly:** `fn_10044AE0`, `fn_10044D40`, `YmElem_ComputeViewDepthKey`, `sub_10045190`, `fn_100458F0`, `YmElem_BuildDrawMatrixAndTest`
+- **Reads constants** (.rdata): 1
+- **Run by a frame** (frame_set.json): stack
+
 ### `0x100467E0` fn_100467E0
 
 - **Verified C++** (`tree/src/CMoElem.cpp`): `XI_API int __thiscall fn_100467E0(void *self_, int a1)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 78 returned normally, 1452 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 78, town PASS 76, town2 PASS 76, combat PASS 77, zonetoinn PASS 76
 - **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x100467F2 mov ebp, ecx` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `CDx::SetLight` ×3, `sub_10045800`, `fn_10045C50`, `RegisterWithProcessor`, `fn_100464D0`, `sub_10046550`, `sub_100473F0` ×2, `CMoDX_SetWorldMatrix`, `CMoDX_SetViewMatrix`, `??0exception@@QAE@XZ_1`, `StateBlock_ApplyTSS`, `XiZone_GetDirLights`, `sub_1018B960`, `XiZone_GetDirLight`, `XiZone_GetAmbient`, `XiZone_GetFog`, `D3DXMatrixPerspectiveFovLH_static`, `_atexit`
+- **Calls directly:** `CDx::SetLight` ×3, `fn_10045800`, `fn_10045C50`, `RegisterWithProcessor`, `fn_100464D0`, `sub_10046550`, `fn_100473F0` ×2, `CMoDX::SetWorldMatrix`, `CMoDX::SetViewMatrix`, `fn_1006AD90`, `StateBlock_ApplyTSS`, `XiZone::GetDirLights`, `fn_1018B960`, `XiZone::GetDirLight`, `XiZone::GetAmbient`, `XiZone::GetFog`, `D3DXMatrixPerspectiveFovLH_static`, `_atexit`
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::GetTransform`, `IDirect3DDevice8::LightEnable` ×10, `IDirect3DDevice8::SetRenderState` ×34, `IDirect3DDevice8::SetTransform`
 - **Reads constants** (.rdata): 2
 - **Indirect calls:** 55, of which 49 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
@@ -174,7 +245,7 @@
 - **Verified C++** (`tree/src/CMoElem.cpp`): `XI_API int __thiscall fn_100472F0(_WORD *a1, __int16 a4)`
 - **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 100 D3D calls compared (diffemu_gfx, clean build); gates: fuzz PASS 100, town PASS 98, town2 PASS 98, combat PASS 98, zonetoinn PASS 98
 - **Convention facts:** `ret 4` (purges.json); entry ECX read: `0x100472FD mov ax, word ptr [ecx + 0x16c]` (ecx_use.json); entry EDX never read (edx_use.json)
-- **Calls directly:** `sub_10046550`, `CMoDX_SetViewMatrix`, `??0exception@@QAE@XZ_1`, `StateBlockHolder_ApplyRenderStates`, `_atexit`
+- **Calls directly:** `sub_10046550`, `CMoDX::SetViewMatrix`, `fn_1006AD90`, `StateBlockHolder_ApplyRenderStates`, `_atexit`
 - **Direct3D 8 calls** (com_calls.json, proven device): `IDirect3DDevice8::SetRenderState`, `IDirect3DDevice8::SetTransform`
 - **Indirect calls:** 2, of which 2 have a pop count from a definitive source (vcalls, com_calls, sp_solved, real_sp, game_sp)
 - **Reads globals:** `Fn100472F0_staticGuards`, `g_pResourceMng`, `g_pZoneMap`

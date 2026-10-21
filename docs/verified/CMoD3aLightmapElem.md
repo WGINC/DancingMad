@@ -9,6 +9,14 @@
 - **DancingMad name:** `CMoD3aLightmapElem_GetRuntimeClass` (not stated)
 - **DancingMad note:** unique accessor
 
+### `0x10052C30` fn_10052C30
+
+- **Verified C++** (`tree/src/CMoD3aLightmapElem.cpp`): `XI_API undefined8 __thiscall fn_10052C30(void * self_)`
+- **Gate** (verification/gate_clean_final.jsonl, the live dumps): PASS -- 100 trials, 100 returned normally, 0 D3D calls compared (diffemu_gfx, clean build)
+- **Convention facts:** `ret 0` (purges.json); entry ECX read: `0x10052C31 mov esi, ecx` (ecx_use.json); entry EDX never read (edx_use.json); reads 0 argument slot(s) (cdecl_args.json)
+- **Calls directly:** `CMoElem::Constructor`
+- **Run by a frame** (frame_set.json): static
+
 ### `0x10052C50` CMoD3aLightmapElem::set_field_194
 
 - **Verified C++** (`tree/src/CMoD3aLightmapElem.cpp`): `int CMoD3aLightmapElem::set_field_194(int a2)`
