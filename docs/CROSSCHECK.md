@@ -182,7 +182,9 @@ Over the first 227 slots, §12b's counts are reproduced exactly:
 That table's own new slot is 255, 0x100A4CE0.
 
 **On ffximain-gfx's side:** its `data/class_vtables.json` lists 283 slots for `CXiAtelActor`. That runs 29
-slots past 0x1032E7C0, into the next vtable, so that file is wrong for this class.
+slots past 0x1032E7C0, into the next vtable. The same check found 124 of that file's 226 lists running into the
+next object. ffximain-gfx's `pipeline/vtable_bounds.py` now ends each list at the first address the code refers
+to; `CXiAtelActor` has 254.
 
 ### 6.6 What this pass did not check
 
