@@ -124,3 +124,33 @@ Read the same way, from the vtables' dwords and the functions' instructions.
 
 0x10052ED0 (slot 6 of `0x1032B3B8`) has the same instructions as 0x10041130 (slot 6 of `0x1032AD80`), and both
 store `0x1032AD80`. They are two separate copies. The code shows this; it does not show the class relationship.
+
+### 6.4 Functions cited 0x10 past their start (§11, lines 1338–1360)
+
+Eight of the functions §11's file-I/O race paragraph names are cited at an address exactly 0x10 bytes past the
+function's first instruction. Six of those addresses do not fall on an instruction boundary. No call, jump,
+push or immediate anywhere in the image refers to any of the eight. The function each one falls in is
+referred to:
+
+| Cited | Role in §11 | Function holding it | Referred to by |
+|---|---|---|---|
+| `0x10252F10` | trigger-file loader | 0x10252F00 | the call at 0x1024D48C (inside 0x1024D470, which the text cites as `0x1024D480`) |
+| `0x10253030` | completion callback | 0x10253020 | `push 0x10253020` at 0x10252F13, inside the loader 0x10252F00 |
+| `0x10071280` | resource factory | 0x10071270 | 5 calls |
+| `0x100740D0` | evictor | 0x100740C0 | the call at 0x100712CD, inside 0x10071270 |
+| `0x10072FE0` | main-thread loader | 0x10072FD0 | 10 calls |
+| `0x100731C0` | main-thread loader | 0x100731B0 | 23 calls |
+| `0x10245470` | lobby-entry loader | 0x10245460 | 5 calls |
+| `0x100394E0` | thread pool | 0x100394D0 | the call at 0x10245629 |
+
+The other addresses in the same paragraph are function starts. These were 0x10073430, 0x10071E90, 0x10245650
+and 0x10013AD0.
+
+The calls in the table agree with the paragraph's structure, read with the corrected addresses:
+- the loader is called from 0x1024D470's code and pushes the callback's address;
+- the factory calls the evictor.
+
+Whether the race the paragraph describes happens was not checked.
+
+Also in §13: the "small wrapper at `0x1002A394`" (line 2041) is an instruction inside 0x1002A380, a 46-byte
+function called once, from 0x1002C344.
